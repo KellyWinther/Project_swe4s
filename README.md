@@ -1,7 +1,7 @@
 # Project_swe4s
 This repo contains code and necessary data for Kelly, Autumn, and Audrey's Software Engineering for Scientists Project (SWE4S) Fall 2025
 
-**Documents:**
+**src folder**
 1. spike_times.npy 
     - a 1D numpy (array? or list? will have to check) 
     - list of times an spike was found in the recording area
@@ -20,3 +20,10 @@ This repo contains code and necessary data for Kelly, Autumn, and Audrey's Softw
             - duration
             - max signal envelope amplitude
             
+**test_data**
+- In this folder you will find two data sets to use for unit tests. 
+    1. "_int" : files with underscore int are test datasets that only include integers and no floats
+
+    2. test_data files without "_int" have floats
+
+- to view the npy's as csv, I have added the npy_to_csv.py and the output is saved in the folder "npy_as_csv". This is useful for copy and pasting the expected data during  unit testing. 
