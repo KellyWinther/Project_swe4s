@@ -19,6 +19,10 @@ This repo contains code and necessary data for Kelly, Autumn, and Audrey's Softw
     - also includes some ripple features: 
             - duration
             - max signal envelope amplitude
+
+5. Raster_plot.py
+    - basic structure of python code to make a raster plot. Not complete as of 10.10.2025
+
             
 **test_data**
 - In this folder you will find two data sets to use for unit tests. 
@@ -27,3 +31,5 @@ This repo contains code and necessary data for Kelly, Autumn, and Audrey's Softw
     2. test_data files without "_int" have floats
 
 - to view the npy's as csv, I have added the npy_to_csv.py and the output is saved in the folder "npy_as_csv". This is useful for copy and pasting the expected data during  unit testing. 
+
+- behavior test data set with a simplified .csv is saved as "test_7744_Partnerintro.csv"
