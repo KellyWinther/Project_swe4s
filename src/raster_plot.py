@@ -2,19 +2,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # === PARAMETERS ===
-SWR_index = 1 # Select which trial to visualize
-
-# Choose region (replace MOs_mask with your own boolean mask)
-spikes_index = spike_times[SWR_mask]       # spikes that occur during SWRs
+SWR_index = # Select which SWR to visualize (row in match_times dataframe?)
+spikes_index =  # spikes that occur during SWRs (list inside array?)
 
 # === Extract start and end times for selected trial ===
-plot_start = SWR_start
-plot_end   = SWR_end
+plot_start = #SWR_start_time
+plot_end   = #SWR_end_time
 
 # === Filter spike times within this trial ===
-within_interval_mask = (spikes_index >= plot_start) & (spikes_index <= plot_end)
-filtered_spike_times = spikes_index[within_interval_mask]
-filtered_neuron_ids  = neuron_id_number_per_spike_times[within_interval_mask]
+interval = (spikes_index >= plot_start) & (spikes_index <= plot_end)
+filtered_spike_times = spikes_index[interval]
+filtered_neuron_ids  = #cluster_id_number from spike_index
 
 # === Unique neuron IDs for plotting ===
 unique_neurons = np.unique(filtered_neuron_ids)
@@ -33,6 +31,6 @@ region_name = region_index_str.split('_')[0]
 plt.xlabel('Time (s)')
 plt.ylabel('Neuron Index')
 plt.title(f'Raster Plot for {SWR_index} SWR')
-plt.ylim(0, len(unique_neurons) + 1)
+plt.ylim(0,len(unique_neurons)+1)
 plt.tight_layout()
 plt.show()
