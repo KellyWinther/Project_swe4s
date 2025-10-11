@@ -64,12 +64,14 @@ def load_spike_data(
         Dataframe containing spike times / IDs
     """
 
+    # Factor of 30,000 accounts for sampling rate
     try:
         spike_times = np.load(time_dir).flatten()/30000
     except FileNotFoundError:
         print(f"Filename '{time_dir}' not found")
         sys.exit(1)
 
+    # The '.flatten()' command fixes the data loading as a column
     try:
         spike_clusters = np.load(cluster_dir).flatten()
     except FileNotFoundError:
@@ -93,7 +95,8 @@ def load_spike_data(
 
 def match_times(
         df,
-        swr_dir: str = "./SWRs_7744_partner_intro.csv", 
+        swr_dir: str = "./SWRs_7744_partner_intro.csv",
+        only_keep_good: bool = True,
         progress: bool = True):
 
     """
@@ -108,7 +111,10 @@ def match_times(
         labelled 'Time' (units of seconds). This
         function will look for time ranges that these
         times fall between.
-
+    swr_dir :: str
+        Path to SWR data (should include the file name).
+    only_keep_good :: bool
+        If True, only SWRs labelled as 'good' will be kept.
     progress :: bool
         Disables / enables progress bar representing
         how many times in the provided DataFrame have
@@ -125,7 +131,7 @@ def match_times(
     """
 
     try:
-        return_df = df.copy()
+        spike_df = df.copy()
     except AttributeError:
         print("Could not copy the provided DataFrame")
         sys.exit(1)
@@ -137,26 +143,33 @@ def match_times(
         assert FileNotFoundError(f"Filename '{swr_dir}' not found")
         sys.exit(1)
 
-    # Creates columns for us to store time ranges
-    return_df["SWR Start"] = np.nan
-    return_df["SWR Stop"] = np.nan
+    # Spike data labelled as "good"
+    if only_keep_good:
+        spike_df = spike_df[spike_df["KSLabel"] == "good"]
+
+    # Initializes new columns / types to prevent Pandas warnings
+    swr_df["Spike Times (s)"] = None
+    swr_df["Cluster IDs"] = None
+    swr_df = swr_df.astype({"Spike Times (s)": "object", "Cluster IDs": "object"})
 
     # Extracts all relevant time data (units of seconds)
-    start_times = np.array(swr_df["Start"])
-    stop_times = np.array(swr_df["Stop"])
-    times = np.array(return_df["Time"])
+    spike_times = np.array(spike_df["Time"])
 
-    # Iterates over every time in the user-provided DataFrame
-    for idx in tqdm(range(len(times)), desc="Checking SWR Data", disable=not progress):
+    for idx in tqdm(range(len(swr_df)), desc="Checking SWR Data", disable=not progress):
 
-        # Prevents excessive calculations if time falls outside of all SWR ranges
-        if time_in_range(np.min(start_times), np.max(stop_times), times[idx]):
+        # Creates a mask for all spikes that fall within the current SWR window
+        mask = (
+            swr_df["Start"][idx] <= spike_times) & (spike_times <= swr_df["Stop"][idx]
+        )
 
-            # Adds valid SWR data to return DataFrame
-            for t_start, t_stop in zip(start_times, stop_times):
-                if time_in_range(t_start, t_stop, times[idx]):
-                    return_df.loc[idx, "SWR Start"] = t_start
-                    return_df.loc[idx, "SWR Stop"] = t_stop
-                    break
+        # Assigns the spike times / cluster IDs to the SWR dataframe
+        # NOTE: This is super nasty, but it works. Pandas is weird...
+        swr_df.loc[[idx], "Spike Times (s)"] = pd.Series(
+            [list(spike_times[mask])], index=swr_df.index[[idx]]
+        )
 
-    return return_df
+        swr_df.loc[[idx], "Cluster IDs"] = pd.Series(
+            [list(spike_df["Cluster ID"][mask])], index=swr_df.index[[idx]]
+        )
+
+    return swr_df
