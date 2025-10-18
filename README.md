@@ -2,6 +2,7 @@
 This repo contains code and necessary data for Kelly, Autumn, and Audrey's Software Engineering for Scientists Project (SWE4S) Fall 2025
 
 **src folder**
+
 1. spike_times.npy 
     - a 1D numpy (array? or list? will have to check) 
     - list of times an spike was found in the recording area
@@ -19,6 +20,20 @@ This repo contains code and necessary data for Kelly, Autumn, and Audrey's Softw
     - also includes some ripple features: 
             - duration
             - max signal envelope amplitude
+
+5. loading_utils.py
+    - Contains a host of functions used for loading in SWR and spike cluster data into Python-friendly data structures.
+    - Automatically groups together SWR and spike cluster data with corresponding times.
+
+6. analysis_utils.py
+    - Contains a function for measuring the co-activity of all the clusters loaded in from our data. This is done by counting how many times every other cluster (compared) fires out of all the times a given refence cluster (baseline) fires.
+    - Allows users to plot this 'correlation matrix' as a 2D array with x- and y-ticks representing each cluster id.
+
+7. Example Notebook.ipynb
+    - A Jupyter notebook demonstrating how to use all of the aforementioned functions for our data.
+
+8. example_call.py
+    - A Python script running the exact same code as 'Example Notebook.ipynb' (useful for testing command-line behavior).
             
 **test_data**
 - In this folder you will find two data sets to use for unit tests. 
