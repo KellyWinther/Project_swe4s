@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import sys
 import ast
 
+# the following functions help make raster plots
 
 def mega_raster(df, window=0.1):
     """
