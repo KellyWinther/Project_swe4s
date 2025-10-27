@@ -68,21 +68,21 @@ def load_spike_data(
     try:
         spike_times = np.load(time_dir).flatten()/30000
     except FileNotFoundError:
-        print(f"Filename '{time_dir}' not found")
-        sys.exit(1)
+        raise FileNotFoundError(f"Filename '{time_dir}' not found")
+    
 
     # The '.flatten()' command fixes the data loading as a column
     try:
         spike_clusters = np.load(cluster_dir).flatten()
     except FileNotFoundError:
-        print(f"Filename '{cluster_dir}' not found")
-        sys.exit(1)
+        raise FileNotFoundError(f"Filename '{time_dir}' not found")
+
 
     try:
         cluster_labels = pd.read_csv(label_dir, sep='\t')
     except FileNotFoundError:
-        print(f"Filename '{label_dir}' not found")
-        sys.exit(1)
+        raise FileNotFoundError(f"Filename '{time_dir}' not found")
+
 
     # Loads cluster labels ('cluster_id' renamed to match later convention)
     cluster_labels = cluster_labels.rename(columns={'cluster_id': 'Cluster ID'})
@@ -141,7 +141,7 @@ def match_times(
         swr_df = pd.read_csv(swr_dir)
     except FileNotFoundError:
         assert FileNotFoundError(f"Filename '{swr_dir}' not found")
-        sys.exit(1)
+        
 
     # Spike data labelled as "good"
     if only_keep_good:
