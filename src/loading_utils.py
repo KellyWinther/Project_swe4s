@@ -39,9 +39,9 @@ def time_in_range(t_start: float, t_end: float, t: float):
 
 
 def load_spike_data(
-    time_dir: str = "./spike_times.npy",
-    cluster_dir: str = "./spike_clusters.npy",
-    label_dir: str = "./cluster_KSLabel.tsv",
+    time_dir: str = "../data/spike_times.npy",
+    cluster_dir: str = "../data/spike_clusters.npy",
+    label_dir: str = "../data/cluster_KSLabel.tsv",
 ):
     """
     Loads the time and clusters recorded
