@@ -3,6 +3,7 @@ import pandas as pd
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 
+
 def make_correlation_dictionary(
     df: pd.DataFrame,
     id_column_name: str = "Event Cluster IDs",
@@ -60,13 +61,14 @@ def make_correlation_dictionary(
                     corr_dict[baseline_id][compared_id] += 1
 
         if normalize:
-            
+
             # The original dictionary value is modified, so we have to store it
             baseline_value = corr_dict[baseline_id][baseline_id]
             for compared_id in unique_ids:
                 corr_dict[baseline_id][compared_id] /= baseline_value
 
     return corr_dict
+
 
 def visualize_correlation_dictionary(corr_matrix):
     """
@@ -97,7 +99,7 @@ def visualize_correlation_dictionary(corr_matrix):
 
     # Plots correlation matrix and adds a colorbar
     plt.rcParams["figure.figsize"] = (9, 7)
-    plt.imshow(grid, origin='lower', interpolation="none", cmap="inferno")
+    plt.imshow(grid, origin="lower", interpolation="none", cmap="inferno")
     plt.colorbar(label="Probability of Co-Activity")
 
     # Adds labels to plot

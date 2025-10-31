@@ -5,6 +5,7 @@ import ast
 
 # the following functions help make raster plots
 
+
 def mega_raster(df, window=0.1):
     """
     Generate a merged raster plot of cluster spiking aligned to ripple peaks.
@@ -52,12 +53,14 @@ def mega_raster(df, window=0.1):
         clusters = row["Cluster IDs"]
 
         for spk_time, clust in zip(spike_times, clusters):
-            expanded_rows.append({
-                "ripple_peak": peak,
-                "spike_time": spk_time,
-                "cluster_id": clust,
-                "t_rel": spk_time - peak  # time relative to ripple peak
-            })
+            expanded_rows.append(
+                {
+                    "ripple_peak": peak,
+                    "spike_time": spk_time,
+                    "cluster_id": clust,
+                    "t_rel": spk_time - peak,  # time relative to ripple peak
+                }
+            )
 
     expanded_df = pd.DataFrame(expanded_rows)
 
@@ -69,8 +72,7 @@ def mega_raster(df, window=0.1):
 
     # --- Raster plot ---
     fig, ax = plt.subplots(figsize=(9, 6))
-    ax.scatter(plot_df["t_rel"], plot_df["cluster_id"],
-               s=3, color="black", alpha=0.7)
+    ax.scatter(plot_df["t_rel"], plot_df["cluster_id"], s=3, color="black", alpha=0.7)
     ax.axvline(0, color="red", linestyle="--", linewidth=1)
 
     # --- Formatting ---
@@ -126,8 +128,7 @@ def single_raster(df, ripple_index=0, window=0.05):
 
     # --- Select the ripple to plot ---
     if ripple_index < 0 or ripple_index >= len(df):
-        raise IndexError(
-            f"Ripple index {ripple_index} out of range (0–{len(df)-1}).")
+        raise IndexError(f"Ripple index {ripple_index} out of range (0–{len(df)-1}).")
 
     ripple = df.iloc[ripple_index]
 
@@ -136,8 +137,9 @@ def single_raster(df, ripple_index=0, window=0.05):
     spike_times = [float(s) for s in ripple["Spike Times (s)"]]
     cluster_ids = ripple["Cluster IDs"]
 
-    assert len(spike_times) == len(cluster_ids), \
-        f"Spike Times and Cluster IDs length mismatch #{ripple_index}"
+    assert len(spike_times) == len(
+        cluster_ids
+    ), f"Spike Times and Cluster IDs length mismatch #{ripple_index}"
 
     # --- Compute time relative to ripple peak ---
     t_rel = [t - peak_time for t in spike_times]
@@ -147,7 +149,7 @@ def single_raster(df, ripple_index=0, window=0.05):
 
     # --- Raster plot ---
     fig, ax = plt.subplots(figsize=(8, 5))
-    ax.scatter(t_rel, cluster_ids, s=20, color="black", marker='|')
+    ax.scatter(t_rel, cluster_ids, s=20, color="black", marker="|")
     ax.axvline(0, color="red", linestyle="--", linewidth=1)
 
     ax.set_xlim(x_min, x_max)
@@ -209,8 +211,9 @@ def SWRcluster_raster(df, ripple_index, window):
     cluster_ids = ripple["Cluster IDs"]
 
     # Check matching lengths
-    assert len(spike_times) == len(cluster_ids), \
-        "Spike Times and Cluster IDs length mismatch!"
+    assert len(spike_times) == len(
+        cluster_ids
+    ), "Spike Times and Cluster IDs length mismatch!"
 
     # Compute time relative to ripple peak
     t_rel = [t - peak_time for t in spike_times]
@@ -224,15 +227,12 @@ def SWRcluster_raster(df, ripple_index, window):
     unique_clusters = sorted(set(cluster_ids))
 
     # Map each cluster ID to a scaled position
-    cluster_to_scaled = {
-        cid: i * scale_y
-        for i, cid in enumerate(unique_clusters)
-    }
+    cluster_to_scaled = {cid: i * scale_y for i, cid in enumerate(unique_clusters)}
     scaled_y = [cluster_to_scaled[c] for c in cluster_ids]
 
     # === Raster plot for this ripple ===
     fig, ax = plt.subplots(figsize=(8, 6))
-    ax.scatter(t_rel, scaled_y, s=50, color="black", marker='|')
+    ax.scatter(t_rel, scaled_y, s=50, color="black", marker="|")
 
     # Add reference line
     ax.axvline(0, color="red", linestyle="--", linewidth=1)
@@ -245,9 +245,11 @@ def SWRcluster_raster(df, ripple_index, window):
     ax.set_xlim(x_min, x_max)
     ax.set_xlabel("Time (s) relative to ripple peak")
     ax.set_ylabel("Active Cluster IDs")
-    ax.set_title(f"Ripple #{ripple_index} \
+    ax.set_title(
+        f"Ripple #{ripple_index} \
                  | Peak = {peak_time:.3f}s | \
-                 {len(spike_times)} spikes")
+                 {len(spike_times)} spikes"
+    )
 
     plt.tight_layout()
     plt.show()

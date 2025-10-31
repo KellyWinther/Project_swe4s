@@ -5,11 +5,8 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 import sys
 
-def time_in_range(
-        t_start: float, 
-        t_end: float, 
-        t: float):
 
+def time_in_range(t_start: float, t_end: float, t: float):
     """
     Checks if a time lies between a given
     start and end time (inclusive).
@@ -34,18 +31,19 @@ def time_in_range(
 
     # NOTE: TypeError can be triggered by 'None'
     try:
-        in_range = (t_start <= t <= t_end)
+        in_range = t_start <= t <= t_end
     except TypeError:
         print("Non-numeric entry provided, defaulting to 'False'")
         in_range = False
 
     return in_range
 
-def load_spike_data(
-        time_dir: str = "./spike_times.npy", 
-        cluster_dir: str = "./spike_clusters.npy",
-        label_dir: str = "./cluster_KSLabel.tsv"):
 
+def load_spike_data(
+    time_dir: str = "./spike_times.npy",
+    cluster_dir: str = "./spike_clusters.npy",
+    label_dir: str = "./cluster_KSLabel.tsv",
+):
     """
     Loads the time and clusters recorded
     for each spike and joins both datasets
@@ -66,7 +64,7 @@ def load_spike_data(
 
     # Factor of 30,000 accounts for sampling rate
     try:
-        spike_times = np.load(time_dir).flatten()/30000
+        spike_times = np.load(time_dir).flatten() / 30000
     except FileNotFoundError:
         print(f"Filename '{time_dir}' not found")
         sys.exit(1)
@@ -79,19 +77,20 @@ def load_spike_data(
         sys.exit(1)
 
     try:
-        cluster_labels = pd.read_csv(label_dir, sep='\t')
+        cluster_labels = pd.read_csv(label_dir, sep="\t")
     except FileNotFoundError:
         print(f"Filename '{label_dir}' not found")
         sys.exit(1)
 
     # Loads cluster labels ('cluster_id' renamed to match later convention)
-    cluster_labels = cluster_labels.rename(columns={'cluster_id': 'Cluster ID'})
+    cluster_labels = cluster_labels.rename(columns={"cluster_id": "Cluster ID"})
 
     # Joins time, id, and label data into a single array
-    spike_df = pd.DataFrame({"Time":spike_times, "Cluster ID":spike_clusters})
-    spike_df = pd.merge(spike_df, cluster_labels, on='Cluster ID', how='left')
+    spike_df = pd.DataFrame({"Time": spike_times, "Cluster ID": spike_clusters})
+    spike_df = pd.merge(spike_df, cluster_labels, on="Cluster ID", how="left")
 
     return spike_df
+
 
 def match_times(
     dataframe: pd.DataFrame,
@@ -103,7 +102,6 @@ def match_times(
     keep_event_columns: list = [],
     progress: bool = True,
 ) -> pd.DataFrame:
-
     """
     Checks if events contained in a user-provided DataFrame
     contain times that fall within a window found in a
@@ -195,16 +193,18 @@ def match_times(
 
     # Renames columns to be grammatically correct
     renamed_event_columns = [f"Event {string}s" for string in keep_event_columns]
-    
+
     # Initialize new columns properly (object dtype) to prevent Pandas errors
     for col in renamed_event_columns:
         window_df[col] = None
         window_df[col] = window_df[col].astype("object")
-    
+
     # Extract all relevant time data (units of seconds)
     event_times = np.array(event_df[event_time_column])
-    
-    for idx in tqdm(range(len(window_df)), desc="Checking Event Data", disable=not progress):
+
+    for idx in tqdm(
+        range(len(window_df)), desc="Checking Event Data", disable=not progress
+    ):
 
         # Masking allows us to avoid excessive looping
         start_time = np.array(window_df[time_interval_columns[0]])[idx]
