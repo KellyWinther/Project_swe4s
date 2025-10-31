@@ -6,18 +6,20 @@ __Last Updated:__ 10/31/2025
 <img src="https://static.scientificamerican.com/sciam/cache/file/F026E019-CE84-4481-AAB758B7ECA7A10F_source.jpg?crop=16%3A9%2Csmart&w=1920" width="700em">
 
 ## Introduction
-Memory formation is salient topic in modern medicinal research. Whether caused by neurodegenerative or neuropsychiatric disease, there are several medical conditions that can impact a patient's long-term memory formation. By studying patterns in memory formation in prarie voles, we may be able to uncover the neural mechanisms for generating long-lasting social memories.
+Memory formation is salient topic in modern medical research. Whether caused by neurodegenerative or neuropsychiatric disease, there are several medical conditions that can impact a patient's long-term memory formation. By studying patterns in memory formation in prairie voles, a unique rodent species that forms complex social relationships, we may be able to uncover the neural mechanisms for generating long-lasting social memories.
 
-One of these signals is known as a __sharp wave ripple (SWR)__, which are brief, sudden oscillatory signals produced by synchronous neuron activity. In this project, we study trends and patterns in neuron activity during SWRs. Specifically, we are interesting in studying how correlated the firing of one neuron cluster is against every other cluster, and whether the sequence in which clusters fire is consistent across many different SWR events.
+One of these signals is known as a __sharp wave ripple (SWR)__, which is a brief oscillatory event produced by synchronous neuron activity and vital to memory consolidation. The neuronal activity within a SWR for spatial memories is a sequential replay of neuronal firing that recapitulates the exact event being converted to a memory. In this project, we investigate neuron activity during SWRs following social interactions. Specifically, we are interested in identifying whether SWRs for social memories similarly maintain sequential patterns, or whether a specific set of neurons are sufficient to encode a social memory without maintaining a set firing order. 
 
-(FIXME; Kelly, it would be helpful if you could check / flesh some of this introduction out? I have written out my best attempt at an explanation. Ideally, this should only be 1-2 paragraphs.)
+Important Notes and Scientific Considerations:
+When processing SWR data, a single neuron is identified by its 'cluster id' and a single unit of activity is called a 'spike'.
+Neurons come in a variety of types that play different roles in the biological system. Specifically, pyramidal neurons are known to maintain sequences in replay events. 
 
-## Retrieving the Data (FIXME)
+## Retrieving the Data
+Please visit this Google Drive folder: https://drive.google.com/drive/folders/1FQuPhIkBRvUqAuGs4bC9ml2yeqDd4OmV?usp=sharing
+
 To pull the full, original datasets, you can run the following commands in your terminal...
 ```
-curl (FIXME) <-- Should be for loading SWR data
-curl (FIXME) <-- Should be for loading spike data
-curl (FIXME) <-- Should be for loading ???
+curl  """ COMING SOON """
 ```
 
 ## Quickstart
