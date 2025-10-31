@@ -92,7 +92,6 @@ def visualize_correlation_dictionary(corr_matrix):
     keys = list(corr_matrix.keys())
 
     # Populates matrix with values found in the dictionary
-    # NOTE: I think I have the indexing order right, but another pair of eyes would be great!
     for i in range(len(grid)):
         for j in range(len(grid)):
             grid[j][i] = corr_matrix[keys[i]][keys[j]]
