@@ -1,7 +1,6 @@
 # Necessary imports
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from tqdm import tqdm
 import sys
 
@@ -174,7 +173,7 @@ def match_times(
         assert FileNotFoundError(f"Filename '{directory}' not found")
         sys.exit(1)
 
-    # NOTE: These could probably be broken off into a separate function, will revisit later
+    # NOTE: These could probably be broken off into a separate function
     for column_name, valid_values in filter_event_data.items():
         try:
             event_df = event_df[event_df[column_name].isin(valid_values)]
@@ -211,7 +210,7 @@ def match_times(
         end_time = np.array(window_df[time_interval_columns[1]])[idx]
         mask = (start_time <= event_times) & (event_times <= end_time)
 
-        # NOTE: Apparently Pandas is depricating their old indexing tricks, need to use '.at' now
+        # NOTE: Pandas is depricating their old indexing tricks, need to use '.at' now
         for column, renamed_column in zip(keep_event_columns, renamed_event_columns):
             data = list(event_df[column][mask])
             window_df.at[idx, renamed_column] = data
