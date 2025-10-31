@@ -1,7 +1,52 @@
-# Project_swe4s
-This repo contains code and necessary data for Kelly, Autumn, and Audrey's Software Engineering for Scientists Project (SWE4S) Fall 2025
+# Can Prarie Voles Help Us Understand Memory Formation?
 
-**src folder**
+__Collaborators:__ Kelly, Autumn, Audrey <br>
+__Last Updated:__ 10/31/2025
+
+<img src="https://static.scientificamerican.com/sciam/cache/file/F026E019-CE84-4481-AAB758B7ECA7A10F_source.jpg?crop=16%3A9%2Csmart&w=1920" width="500em">
+
+## Introduction
+Memory formation is salient topic in modern medicinal research. Whether caused by neurodegenerative disease (i.e., dementias) or neuropsychiatric disease (i.e., schizophrenia), there are several medical conditions that can impact a patient's long-term memory formation. By studying memory formation in prarie voles, we may be able to uncover the neural mechanisms for generating long-lasting social memories.
+
+One of these signals is known as a __sharp wave ripple (SWR)__, which are brief, sudden oscillatory signals produced by synchronous neuron activity.
+
+(FIXME; Kelly, it would be helpful if you could check / flesh some of this introduction out? I have written out my best attempt at an explanation. Ideally, this should only be 1-2 paragraphs.)
+
+## Retrieving the Data (FIXME)
+
+To pull the full, original datasets, you can run the following commands in your terminal...
+```
+curl (FIXME) <-- Should be for loading SWR data
+curl (FIXME) <-- Should be for loading spike data
+curl (FIXME) <-- Should be for loading ???
+```
+
+## Repository Structure
+There are three important folders in our repository...
+
+- __/src__ ~ Stores the Python scripts used in our reducation and analysis
+- __/data__ ~ Holds small subsets of data used for internal testing / example scripts
+- __/test__ ~ Contains all the unit / functional test scripts
+
+Specific descriptions of each file in these directories are provided below. However, there are also a couple that we kept in the repository's root directory. These include...
+
+1) ```environment.yml``` ~ Has the dependency information for our project
+2) ```Snakefile``` ~ The snakemake workflow used for our final reduction (FIXME; NOT MADE YET)
+
+Any files that do not fit cleanly into the aforementioned folders will be added to the root directory.
+
+### What's in the __\src Folder__?
+The core functionality of our workflow is separated into three files...
+
+1) ```analysis_utils.py``` ~ Responsible for building a 'correlation matrix' showing how often a given cluster fires given another cluster has also fired.
+2) ```loading_utils.py``` ~ Contains three functions that are necessary for processing our data. Specifically, these functions are responsible for loading spike cluster data into a Pandas DataFrame and joining two DataFrames based on whether an 'event time' falls within a 'time window.'
+3) ```raster_plot.py``` ~ (FIXME: Kelly, could you put a brief description here?)
+
+There are also two example scripts that demonstrate example usage of these functions.
+
+### What's in the __\data Folder__?
+
+There are four primary types of data contained here (FIXME; will change after cleanup)...
 
 1. spike_times.npy 
     - a 1D numpy (array? or list? will have to check) 
@@ -21,29 +66,4 @@ This repo contains code and necessary data for Kelly, Autumn, and Audrey's Softw
             - duration
             - max signal envelope amplitude
 
-5. loading_utils.py
-    - Contains a host of functions used for loading in SWR and spike cluster data into Python-friendly data structures.
-    - Automatically groups together SWR and spike cluster data with corresponding times.
-
-6. analysis_utils.py
-    - Contains a function for measuring the co-activity of all the clusters loaded in from our data. This is done by counting how many times every other cluster (compared) fires out of all the times a given refence cluster (baseline) fires.
-    - Allows users to plot this 'correlation matrix' as a 2D array with x- and y-ticks representing each cluster id.
-
-7. Example Notebook.ipynb
-    - A Jupyter notebook demonstrating how to use all of the aforementioned functions for our data.
-
-8. example_call.py
-    - A Python script running the exact same code as 'Example Notebook.ipynb' (useful for testing command-line behavior).
-5. Raster_plot.py
-    - basic structure of python code to make a raster plot. Not complete as of 10.10.2025
-
-            
-**test_data**
-- In this folder you will find two data sets to use for unit tests. 
-    1. "_int" : files with underscore int are test datasets that only include integers and no floats
-
-    2. test_data files without "_int" have floats
-
-- to view the npy's as csv, I have added the npy_to_csv.py and the output is saved in the folder "npy_as_csv". This is useful for copy and pasting the expected data during  unit testing. 
-
-- behavior test data set with a simplified .csv is saved as "test_7744_Partnerintro.csv"
+### What's in the __\test Folder__ (FIXME)?
