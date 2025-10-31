@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 def make_correlation_dictionary(
     df: pd.DataFrame,
-    id_column_name: str = "Cluster IDs",
+    id_column_name: str = "Event Cluster IDs",
     normalize: bool = True,
 ):
     """
@@ -53,7 +53,7 @@ def make_correlation_dictionary(
 
     for baseline_id in tqdm(unique_ids, desc="Building correlation dict."):
         for compared_id in unique_ids:
-            for row in df["Cluster IDs"]:
+            for row in df[id_column_name]:
 
                 # Only true if both clusters fires during the same SWR
                 if (baseline_id in row) and (compared_id in row):
