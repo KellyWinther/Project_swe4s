@@ -94,31 +94,64 @@ def load_spike_data(
     return spike_df
 
 def match_times(
-        df,
-        swr_dir: str = "./SWRs_7744_partner_intro.csv",
-        only_keep_good: bool = True,
-        progress: bool = True):
+    dataframe: pd.DataFrame,
+    directory: str,
+    filter_event_data: dict = {},
+    filter_window_data: dict = {},
+    event_time_column: str = "Time",
+    time_interval_columns: list = ["Start", "Stop"],
+    keep_event_columns: list = [],
+    progress: bool = True,
+) -> pd.DataFrame:
 
     """
-    Checks if times in the user-provided DataFrame
-    are contained within any of the ranges found
-    in our SWR data.
+    Checks if events contained in a user-provided DataFrame
+    contain times that fall within a window found in a
+    separate datafile. For consistency, the user-provided
+    DataFrame is referred to as the 'event dataframe' and
+    should only contain a single time per row. The directory
+    should point towards the 'window dataframe' which should
+    contain two times per row (a start and stop time).
 
     Parameters:
     -----------
-    df :: pd.DataFrame
+    dataframe :: pd.DataFrame
         Dataframe containing at least one column
-        labelled 'Time' (units of seconds). This
-        function will look for time ranges that these
-        times fall between.
-    swr_dir :: str
-        Path to SWR data (should include the file name).
-    only_keep_good :: bool
-        If True, only SWRs labelled as 'good' will be kept.
+        labeled 'Time' (or the string assigned to
+        'event_time_column'; assumes units of seconds).
+        This function will look for time ranges that
+        these times fall between.
+    directory :: str
+        Path (directory + filename) containing data with
+        times ranges (found in columns 'Start' and 'Stop'
+        by default).
+    filter_event_data :: dict
+        Indicates which values to filter by in the 'event
+        dataframe.' Every key-value pair should be a column
+        name in the 'event dataframe' (key) and a list of
+        valid entries (value). If no arguments are provided,
+        then no filtering is applied.
+    filter_window_data :: dict
+        Indicates which values to filter by in the 'window
+        dataframe.' Every key-value pair should be a column
+        name in the 'window dataframe' (key) and a list of
+        valid entries (value). If no arguments are provided,
+        then no filtering is applied.
+    event_time_column :: str
+        The name of a column in the 'event dataframe' containing
+        time data (assumes units of seconds).
+    time_interval_column :: list
+        The names of two columns in the 'window dataframe'
+        containing the start and stop (both in seconds) of
+        a valid window. Events with a time falling between these
+        two values will be associated with the respective window.
+    keep_event_columns :: list
+        A list of columns to keep from the 'event dataframe'. For
+        example, if provided ['A', 'B'], then the values of 'A' and
+        'B' for all matched events will be saved in a list in the
+        returned dataframe.
     progress :: bool
-        Disables / enables progress bar representing
-        how many times in the provided DataFrame have
-        been checked.
+        Disables / enables progress bar.
 
     Returns:
     --------
@@ -130,46 +163,57 @@ def match_times(
         to NaN values.
     """
 
+    # This prevents us from accidentally modifying the original DataFrame
     try:
-        spike_df = df.copy()
+        event_df = dataframe.copy()
     except AttributeError:
         print("Could not copy the provided DataFrame")
         sys.exit(1)
 
-    # Loads SWR dataframe
     try:
-        swr_df = pd.read_csv(swr_dir)
+        window_df = pd.read_csv(directory)
     except FileNotFoundError:
-        assert FileNotFoundError(f"Filename '{swr_dir}' not found")
+        assert FileNotFoundError(f"Filename '{directory}' not found")
         sys.exit(1)
 
-    # Spike data labelled as "good"
-    if only_keep_good:
-        spike_df = spike_df[spike_df["KSLabel"] == "good"]
+    # NOTE: These could probably be broken off into a separate function, will revisit later
+    for column_name, valid_values in filter_event_data.items():
+        try:
+            event_df = event_df[event_df[column_name].isin(valid_values)]
+        except KeyError:
+            print(f"Column name '{key}' not found, moving on without filtering")
+        except TypeError:
+            print(f"Valid values must be a list, not '{type(valid_values)}'")
 
-    # Initializes new columns / types to prevent Pandas warnings
-    swr_df["Spike Times (s)"] = None
-    swr_df["Cluster IDs"] = None
-    swr_df = swr_df.astype({"Spike Times (s)": "object", "Cluster IDs": "object"})
+    for column_name, valid_values in filter_window_data.items():
+        try:
+            window_df = window_df[window_df[column_name].isin(valid_values)]
+        except KeyError:
+            print(f"Column name '{key}' not found, moving on without filtering")
+        except TypeError:
+            print(f"Valid values must be a list, not '{type(valid_values)}'")
 
-    # Extracts all relevant time data (units of seconds)
-    spike_times = np.array(spike_df["Time"])
+    # Renames columns to be grammatically correct
+    renamed_event_columns = [f"Event {string}s" for string in keep_event_columns]
+    
+    # Initialize new columns properly (object dtype) to prevent Pandas errors
+    for col in renamed_event_columns:
+        window_df[col] = None
+        window_df[col] = window_df[col].astype("object")
+    
+    # Extract all relevant time data (units of seconds)
+    event_times = np.array(event_df[event_time_column])
+    
+    for idx in tqdm(range(len(window_df)), desc="Checking Event Data", disable=not progress):
 
-    for idx in tqdm(range(len(swr_df)), desc="Checking SWR Data", disable=not progress):
+        # Masking allows us to avoid excessive looping
+        start_time = np.array(window_df[time_interval_columns[0]])[idx]
+        end_time = np.array(window_df[time_interval_columns[1]])[idx]
+        mask = (start_time <= event_times) & (event_times <= end_time)
 
-        # Creates a mask for all spikes that fall within the current SWR window
-        mask = (
-            swr_df["Start"][idx] <= spike_times) & (spike_times <= swr_df["Stop"][idx]
-        )
+        # NOTE: Apparently Pandas is depricating their old indexing tricks, need to use '.at' now
+        for column, renamed_column in zip(keep_event_columns, renamed_event_columns):
+            data = list(event_df[column][mask])
+            window_df.at[idx, renamed_column] = data
 
-        # Assigns the spike times / cluster IDs to the SWR dataframe
-        # NOTE: This is super nasty, but it works. Pandas is weird...
-        swr_df.loc[[idx], "Spike Times (s)"] = pd.Series(
-            [list(spike_times[mask])], index=swr_df.index[[idx]]
-        )
-
-        swr_df.loc[[idx], "Cluster IDs"] = pd.Series(
-            [list(spike_df["Cluster ID"][mask])], index=swr_df.index[[idx]]
-        )
-
-    return swr_df
+    return window_df
