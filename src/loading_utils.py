@@ -179,7 +179,7 @@ def match_times(
         try:
             event_df = event_df[event_df[column_name].isin(valid_values)]
         except KeyError:
-            print(f"Column name '{key}' not found, moving on without filtering")
+            print(f"Column name '{column_name}' not found, moving on without filtering")
         except TypeError:
             print(f"Valid values must be a list, not '{type(valid_values)}'")
 
@@ -187,7 +187,7 @@ def match_times(
         try:
             window_df = window_df[window_df[column_name].isin(valid_values)]
         except KeyError:
-            print(f"Column name '{key}' not found, moving on without filtering")
+            print(f"Column name '{column_name}' not found, moving on without filtering")
         except TypeError:
             print(f"Valid values must be a list, not '{type(valid_values)}'")
 
