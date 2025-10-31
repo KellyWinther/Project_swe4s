@@ -13,12 +13,23 @@ One of these signals is known as a __sharp wave ripple (SWR)__, which are brief,
 (FIXME; Kelly, it would be helpful if you could check / flesh some of this introduction out? I have written out my best attempt at an explanation. Ideally, this should only be 1-2 paragraphs.)
 
 ## Retrieving the Data (FIXME)
-
 To pull the full, original datasets, you can run the following commands in your terminal...
 ```
 curl (FIXME) <-- Should be for loading SWR data
 curl (FIXME) <-- Should be for loading spike data
 curl (FIXME) <-- Should be for loading ???
+```
+
+## Quickstart
+If you would like to re-create our analysis, you can clone our respository by running...
+```
+git clone https://github.com/KellyWinther/Project_swe4s.git
+```
+Then, to run our snakemake workflow, simply run...
+```
+cd Project_swe4s
+pip install snakemake
+snakemake --cores 1
 ```
 
 ## Repository Structure
@@ -45,7 +56,6 @@ The core functionality of our workflow is separated into three files...
 There are also two example scripts that demonstrate example usage of these functions.
 
 ### What's in the __\data Folder__?
-
 There are four primary types of data contained here (FIXME; will change after cleanup)...
 
 1. ```spike_times.npy```
