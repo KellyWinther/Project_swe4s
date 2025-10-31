@@ -3,12 +3,12 @@
 __Collaborators:__ Kelly, Autumn, Audrey <br>
 __Last Updated:__ 10/31/2025
 
-<img src="https://static.scientificamerican.com/sciam/cache/file/F026E019-CE84-4481-AAB758B7ECA7A10F_source.jpg?crop=16%3A9%2Csmart&w=1920" width="500em">
+<img src="https://static.scientificamerican.com/sciam/cache/file/F026E019-CE84-4481-AAB758B7ECA7A10F_source.jpg?crop=16%3A9%2Csmart&w=1920" width="700em">
 
 ## Introduction
-Memory formation is salient topic in modern medicinal research. Whether caused by neurodegenerative disease (i.e., dementias) or neuropsychiatric disease (i.e., schizophrenia), there are several medical conditions that can impact a patient's long-term memory formation. By studying memory formation in prarie voles, we may be able to uncover the neural mechanisms for generating long-lasting social memories.
+Memory formation is salient topic in modern medicinal research. Whether caused by neurodegenerative or neuropsychiatric disease, there are several medical conditions that can impact a patient's long-term memory formation. By studying patterns in memory formation in prarie voles, we may be able to uncover the neural mechanisms for generating long-lasting social memories.
 
-One of these signals is known as a __sharp wave ripple (SWR)__, which are brief, sudden oscillatory signals produced by synchronous neuron activity.
+One of these signals is known as a __sharp wave ripple (SWR)__, which are brief, sudden oscillatory signals produced by synchronous neuron activity. In this project, we study trends and patterns in neuron activity during SWRs. Specifically, we are interesting in studying how correlated the firing of one neuron cluster is against every other cluster, and whether the sequence in which clusters fire is consistent across many different SWR events.
 
 (FIXME; Kelly, it would be helpful if you could check / flesh some of this introduction out? I have written out my best attempt at an explanation. Ideally, this should only be 1-2 paragraphs.)
 
