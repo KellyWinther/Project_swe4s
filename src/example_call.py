@@ -2,9 +2,9 @@ from loading_utils import load_spike_data, match_times
 from analysis_utils import make_correlation_dictionary, visualize_correlation_dictionary
 
 spike_df = load_spike_data(
-    time_dir = "./data/full_data/spike_times.npy",
-    cluster_dir = "./data/full_data/spike_clusters.npy",
-    label_dir = "./data/full_data/cluster_KSLabel.tsv",
+    time_dir="./data/full_data/spike_times.npy",
+    cluster_dir="./data/full_data/spike_clusters.npy",
+    label_dir="./data/full_data/cluster_KSLabel.tsv",
 )
 
 # Finds which spikes happened during a SWR

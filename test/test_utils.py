@@ -2,34 +2,37 @@ import unittest
 from pathlib import Path
 import sys
 import pandas as pd
+
 BASE = Path(__file__).resolve().parent.parent
 sys.path.append(str(BASE / "src"))
-import loading_utils
-import analysis_utils
+
+import loading_utils # noqa: E402
+import analysis_utils # noqa: E402
 
 
 class TestMakeCorrelationDictionary(unittest.TestCase):
     def setUp(self):
-        self.df = pd.DataFrame({
-            "Cluster IDs": [
-                [1, 2],
-                [2, 3],
-                [1, 3],
-                [1],
-            ]
-        })
+        self.df = pd.DataFrame(
+            {
+                "Cluster IDs": [
+                    [1, 2],
+                    [2, 3],
+                    [1, 3],
+                    [1],
+                ]
+            }
+        )
 
     def test_normalized_correlation(self):
         corr = analysis_utils.make_correlation_dictionary(
-                                                self.df,
-                                                id_column_name="Cluster IDs",
-                                                normalize=True)
+            self.df, id_column_name="Cluster IDs", normalize=True
+        )
 
         # Expected:
         # baseline 1: with (1,2,3) => (3,1,1) / 3 = (1.0, 1/3, 1/3)
         self.assertAlmostEqual(corr[1][1], 1.0, places=7)
-        self.assertAlmostEqual(corr[1][2], 1.0/3.0, places=7)
-        self.assertAlmostEqual(corr[1][3], 1.0/3.0, places=7)
+        self.assertAlmostEqual(corr[1][2], 1.0 / 3.0, places=7)
+        self.assertAlmostEqual(corr[1][3], 1.0 / 3.0, places=7)
 
         # baseline 2: with (1,2,3) => (1,2,1) / 2 = (0.5, 1.0, 0.5)
         self.assertAlmostEqual(corr[2][1], 0.5, places=7)
@@ -43,9 +46,8 @@ class TestMakeCorrelationDictionary(unittest.TestCase):
 
     def test_raw_counts_when_not_normalized(self):
         corr = analysis_utils.make_correlation_dictionary(
-                                                self.df,
-                                                id_column_name="Cluster IDs",
-                                                normalize=False)
+            self.df, id_column_name="Cluster IDs", normalize=False
+        )
 
         # Raw counts expected:
         # baseline 1: self=3, with2=1, with3=1

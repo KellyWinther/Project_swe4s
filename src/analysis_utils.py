@@ -8,7 +8,6 @@ from tqdm import tqdm
 matplotlib.use("Agg")
 
 
-
 def make_correlation_dictionary(
     df: pd.DataFrame,
     id_column_name: str = "Event Cluster IDs",
