@@ -84,4 +84,5 @@ There are four primary types of data contained here...
 
 We have a variety of filetypes (i.e., .npy, .csv, .tsv) for now, but we are working on reducing our data into a single, consistent type. If you look in the '\data' folder, you will see two sub-folders labelled '\test_data' and 'full_data'. The first of these sub-folders holds short, sample versions of our data that we can use for quick testing. The second sub-folder contains the raw, complete datasets we are using for our analysis. Until we get the ```curl``` command working, these files are provided on the repository.
 
-### What's in the __'\test' Folder__ (FIXME)?
+### What's in the __'\test' Folder__?
+Here you can find the scripts we use for automated testing. These are broken up into "functional tests" and "unit tests." We intend to increase the scope of these tests in the near future.
