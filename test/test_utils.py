@@ -6,8 +6,8 @@ import pandas as pd
 BASE = Path(__file__).resolve().parent.parent
 sys.path.append(str(BASE / "src"))
 
-import loading_utils # noqa: E402
-import analysis_utils # noqa: E402
+import loading_utils  # noqa: E402
+import analysis_utils  # noqa: E402
 
 
 class TestMakeCorrelationDictionary(unittest.TestCase):
