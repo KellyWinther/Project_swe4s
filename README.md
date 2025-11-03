@@ -30,35 +30,39 @@ git clone https://github.com/KellyWinther/Project_swe4s.git
 Then, to run our snakemake workflow, simply run...
 ```
 cd Project_swe4s
-pip install snakemake
 snakemake --cores 1
 ```
+This will create an 'outputs/' folder in the root directory with some intermediate data products. As of now, the primary result is the ```correlation_matrix.png``` that shows how correlated neuron clusters are when they fire. If you are having trouble getting the workflow to run, try using the ```environment.yml``` file we provided!
 
 ## Repository Structure
 There are three important folders in our repository...
 
 - __/src__ ~ Stores the Python scripts used in our reducation and analysis
-- __/data__ ~ Holds small subsets of data used for internal testing / example scripts
+- __/data__ ~ Holds the data used for internal testing / example scripts and our full analysis
 - __/test__ ~ Contains all the unit / functional test scripts
 
 Specific descriptions of each file in these directories are provided below. However, there are also a couple that we kept in the repository's root directory. These include...
 
 1) ```environment.yml``` ~ Has the dependency information for our project
-2) ```Snakefile``` ~ The snakemake workflow used for our final reduction (FIXME; NOT MADE YET)
+2) ```Snakefile``` ~ The snakemake workflow used for our final reduction
 
 Any files that do not fit cleanly into the aforementioned folders will be added to the root directory.
 
-### What's in the __\src Folder__?
+### What's in the __'\src' Folder__?
 The core functionality of our workflow is separated into three files...
 
 1) ```analysis_utils.py``` ~ Responsible for building a 'correlation matrix' showing how often a given cluster fires given another cluster has also fired.
 2) ```loading_utils.py``` ~ Contains three functions that are necessary for processing our data. Specifically, these functions are responsible for loading spike cluster data into a Pandas DataFrame and joining two DataFrames based on whether an 'event time' falls within a 'time window.'
-3) ```raster_plot.py``` ~ (FIXME: Kelly, could you put a brief description here?)
+3) ```raster_plot.py``` ~ Uses the data produced by 'loading_utils.py' to generate "Raster plots." Raster plots are useful for visualizing discrete data.
 
-There are also two example scripts that demonstrate example usage of these functions.
+There are also two example scripts that demonstrate example usage of these functions. To the example script, run the following command from the root directory...
+```
+python src/example_call.py
+```
+NOTE: As of now, the correlation matrix will not display when you run these commands. This is a consequence of a choice we made to create our snakemake workflow, and will be adjusted in future updates.
 
-### What's in the __\data Folder__?
-There are four primary types of data contained here (FIXME; will change after cleanup)...
+### What's in the __'\data' Folder__?
+There are four primary types of data contained here...
 
 1. ```spike_times.npy```
     - a 1D numpy (array? or list? will have to check) 
@@ -78,4 +82,7 @@ There are four primary types of data contained here (FIXME; will change after cl
             - duration
             - max signal envelope amplitude
 
-### What's in the __\test Folder__ (FIXME)?
+We have a variety of filetypes (i.e., .npy, .csv, .tsv) for now, but we are working on reducing our data into a single, consistent type. If you look in the '\data' folder, you will see two sub-folders labelled '\test_data' and 'full_data'. The first of these sub-folders holds short, sample versions of our data that we can use for quick testing. The second sub-folder contains the raw, complete datasets we are using for our analysis. Until we get the ```curl``` command working, these files are provided on the repository.
+
+### What's in the __'\test' Folder__?
+Here you can find the scripts we use for automated testing. These are broken up into "functional tests" and "unit tests." We intend to increase the scope of these tests in the near future.
