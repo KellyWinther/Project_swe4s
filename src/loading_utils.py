@@ -5,7 +5,11 @@ from tqdm import tqdm
 import sys
 
 
-def time_in_range(t_start: float, t_end: float, t: float):
+def time_in_range(
+    t_start: float,
+    t_end: float,
+    t: float,
+) -> bool:
     """
     Checks if a time lies between a given
     start and end time (inclusive).
@@ -42,7 +46,7 @@ def load_spike_data(
     time_dir: str = "../data/spike_times.npy",
     cluster_dir: str = "../data/spike_clusters.npy",
     label_dir: str = "../data/cluster_KSLabel.tsv",
-):
+) -> pd.DataFrame:
     """
     Loads the time and clusters recorded
     for each spike and joins both datasets

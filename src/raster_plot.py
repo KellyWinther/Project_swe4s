@@ -6,18 +6,21 @@ import ast
 # the following functions help make raster plots
 
 
-def mega_raster(df, window=0.1):
+def mega_raster(
+    df: pd.DataFrame,
+    window: float = 0.1,
+):
     """
     Generate a merged raster plot of cluster spiking aligned to ripple peaks.
 
     Parameters
     ----------
-    df : pandas.DataFrame
+    df :: pandas.DataFrame
         DataFrame with at least these columns:
         - "Peak"
         - "Spike Times (s)"
         - "Cluster IDs"
-    window : float, optional
+    window :: float, optional
         Time window (in seconds) to show around ripple peak (default ±0.1 s).
     """
     # confirm data loads with required columns
@@ -85,20 +88,24 @@ def mega_raster(df, window=0.1):
     plt.show()
 
 
-def single_raster(df, ripple_index=0, window=0.05):
+def single_raster(
+    df: pd.DataFrame,
+    ripple_index: int = 0,
+    window: float = 0.05,
+):
     """
     Plot one ripple's cluster spiking activity aligned to its ripple peak.
 
-    Parameters
-    ----------
-    df : pandas.DataFrame
+    Parameters:
+    -----------
+    df :: pandas.DataFrame
         DataFrame with at least these columns:
         - "Peak"
         - "Spike Times (s)"
         - "Cluster IDs"
-    ripple_index : int, optional
+    ripple_index :: int, optional
         Row index of the ripple to plot (default = 0, the first ripple)
-    window : float, optional
+    window :: float, optional
         Time window around the ripple peak (default ±0.05s)
     """
     # confirm data loads with required columns
@@ -165,20 +172,24 @@ def single_raster(df, ripple_index=0, window=0.05):
     plt.show()
 
 
-def SWRcluster_raster(df, ripple_index, window):
+def SWRcluster_raster(
+    df: pd.DataFrame,
+    ripple_index: int,
+    window: float,
+):
     """
     Plot one ripple's cluster spiking activity aligned to its ripple peak.
 
-    Parameters
-    ----------
+    Parameters:
+    -----------
     df : pandas.DataFrame
         DataFrame with at least these columns:
         - "Peak"
         - "Spike Times (s)"
         - "Cluster IDs"
-    ripple_index : int, optional
+    ripple_index :: int, optional
         Row index of the ripple to plot (default = 0, the first ripple)
-    window : float, optional
+    window :: float, optional
         Time window around the ripple peak (default ±0.05s)
     """
     # confirm data loads with required columns
