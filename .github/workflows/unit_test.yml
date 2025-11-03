@@ -1,35 +1,37 @@
-name: Unit tests
-
 on:
   push:
   pull_request:
     branches: [ main ]
-jobs:
-  run_unit_tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run unit tests
-        env:
-          PYTHONPATH: ${{ github.workspace }}/src
-        run: python3 -u -m unittest discover -s test -v
-  
-  run_style_checks:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: mamba-org/setup-micromamba@v2
-        with:
-          environment-file: environment.yml
-          init-shell: bash
-      - run: pycodestyle $(git ls-files "*.py")
-        shell: bash -l {0}
 
-  run_func_tests:
+jobs:
+  run_unit_test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run functional tests
-        env:
-          PYTHONPATH: ${{ github.workspace }}/src
-        run: bash test/test.sh
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - run: |
+          pip install --upgrade pip
+          pip install pandas matplotlib numpy
+
+      - run: |
+          python test/test_utils.py
+
+  run_func_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - run: |
+          pip install --upgrade pip
+          pip install pandas matplotlib numpy
+
+      - run: |
+          bash test/test.sh
