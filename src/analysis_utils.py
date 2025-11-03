@@ -1,11 +1,11 @@
 import numpy as np
 import pandas as pd
+import matplotlib
+import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 # Prevents interactive output that can disrupt workflow
-import matplotlib
-matplotlib.use('Agg') # or 'Cairo', 'PS', 'PDF', 'SVG'
-import matplotlib.pyplot as plt
+matplotlib.use("Agg")
 
 
 def make_correlation_dictionary(
@@ -78,8 +78,8 @@ def make_correlation_dictionary(
 
 
 def visualize_correlation_dictionary(
-        corr_matrix: dict,
-        save_directory: str = None,
+    corr_matrix: dict,
+    save_directory: str = None,
 ):
     """
     Plots a 'correlation matrix' plot for a given
