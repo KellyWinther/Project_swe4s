@@ -43,9 +43,9 @@ def time_in_range(
 
 
 def load_spike_data(
-    time_dir: str = "../data/spike_times.npy",
-    cluster_dir: str = "../data/spike_clusters.npy",
-    label_dir: str = "../data/cluster_KSLabel.tsv",
+    time_dir: str = "../data/full_data/spike_times.npy",
+    cluster_dir: str = "../data/full_data/spike_clusters.npy",
+    label_dir: str = "../data/full_data/cluster_KSLabel.tsv",
 ) -> pd.DataFrame:
     """
     Loads the time and clusters recorded
