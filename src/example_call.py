@@ -1,12 +1,16 @@
 from loading_utils import load_spike_data, match_times
 from analysis_utils import make_correlation_dictionary, visualize_correlation_dictionary
 
-spike_df = load_spike_data()
+spike_df = load_spike_data(
+    time_dir = "./data/full_data/spike_times.npy",
+    cluster_dir = "./data/full_data/spike_clusters.npy",
+    label_dir = "./data/full_data/cluster_KSLabel.tsv",
+)
 
 # Finds which spikes happened during a SWR
 df = match_times(
     spike_df,
-    "../data/full_data/SWRs_7744_partner_intro.csv",
+    "./data/full_data/SWRs_7744_partner_intro.csv",
     filter_event_data={"KSLabel": ["good"]},
     keep_event_columns=["Time", "Cluster ID"],
     progress=True,

@@ -66,16 +66,16 @@ class TestMakeCorrelationDictionary(unittest.TestCase):
 
 class TestLoadingUtils(unittest.TestCase):
     def test_load_spike_dat_none(self):
-        timename = BASE / "test_data" / "does_not_exist_times.npy"
-        clustername = BASE / "test_data" / "does_not_exist_clusters.npy"
-        labelname = BASE / "test_data" / "does_not_exist_labels.tsv"
+        timename = BASE / "data" / "test_data" / "does_not_exist_times.npy"
+        clustername = BASE / "data" / "test_data" / "does_not_exist_clusters.npy"
+        labelname = BASE / "data" / "test_data" / "does_not_exist_labels.tsv"
         with self.assertRaises(SystemExit):
             loading_utils.load_spike_data(timename, clustername, labelname)
 
     def test_load_spike_dat(self):
-        timename = BASE / "test_data" / "test_spike_times_int.npy"
-        clustername = BASE / "test_data" / "test_spike_clusters_int.npy"
-        labelname = BASE / "test_data" / "test_cluster_KSLabel_int.tsv"
+        timename = BASE / "data" / "test_data" / "test_spike_times_int.npy"
+        clustername = BASE / "data" / "test_data" / "test_spike_clusters_int.npy"
+        labelname = BASE / "data" / "test_data" / "test_cluster_KSLabel_int.tsv"
         df = loading_utils.load_spike_data(timename, clustername, labelname)
         self.assertIsNotNone(df)
 
@@ -85,9 +85,9 @@ class TestLoadingUtils(unittest.TestCase):
         self.assertFalse(loading_utils.time_in_range(0, 10, 11))
 
     def test_match_times_progress_good(self):
-        timename = BASE / "test_data" / "test_spike_times_int.npy"
-        clustername = BASE / "test_data" / "test_spike_clusters_int.npy"
-        labelname = BASE / "test_data" / "test_cluster_KSLabel_int.tsv"
+        timename = BASE / "data" / "test_data" / "test_spike_times_int.npy"
+        clustername = BASE / "data" / "test_data" / "test_spike_clusters_int.npy"
+        labelname = BASE / "data" / "test_data" / "test_cluster_KSLabel_int.tsv"
         df = loading_utils.load_spike_data(timename, clustername, labelname)
         self.assertIsNotNone(df)
 

@@ -1,14 +1,7 @@
-#!/usr/bin/env bash
-set -euo pipefail
+test -e ssshtest || wget -q https://raw.githubusercontent.com/ryanlayer/ssshtest/master/ssshtest
+. ssshtest
 
-test -e ssshtest || curl -s -o ssshtest 
-
-source ssshtest
-
-# run from root directory
-# bash test/test_print_fires.sh
-
-python="python3"
-script="src/loading_utils.py"
-data="test/test_data/subset_agrofood_co2_emission.csv"
-
+# Very basic valid call for testing purposes
+run valid_call python src/example_call.py
+assert_exit_code 0
+assert_in_stdout "First ten rows of extracted data..."

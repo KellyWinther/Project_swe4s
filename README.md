@@ -55,10 +55,9 @@ The core functionality of our workflow is separated into three files...
 2) ```loading_utils.py``` ~ Contains three functions that are necessary for processing our data. Specifically, these functions are responsible for loading spike cluster data into a Pandas DataFrame and joining two DataFrames based on whether an 'event time' falls within a 'time window.'
 3) ```raster_plot.py``` ~ Uses the data produced by 'loading_utils.py' to generate "Raster plots." Raster plots are useful for visualizing discrete data.
 
-There are also two example scripts that demonstrate example usage of these functions. To the example script, run the following commands from the root directory...
+There are also two example scripts that demonstrate example usage of these functions. To the example script, run the following command from the root directory...
 ```
-cd src
-python example_call.py
+python src/example_call.py
 ```
 NOTE: As of now, the correlation matrix will not display when you run these commands. This is a consequence of a choice we made to create our snakemake workflow, and will be adjusted in future updates.
 
