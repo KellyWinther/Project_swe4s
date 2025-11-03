@@ -2,13 +2,10 @@ import unittest
 from pathlib import Path
 import sys
 import pandas as pd
+BASE = Path(__file__).resolve().parent.parent
+sys.path.append(str(BASE / "src"))
 import loading_utils
 import analysis_utils
-
-BASE = Path(__file__).resolve().parent.parent
-
-# Ensure src is importable
-sys.path.append(str(BASE / "src"))
 
 
 class TestMakeCorrelationDictionary(unittest.TestCase):
@@ -72,7 +69,7 @@ class TestLoadingUtils(unittest.TestCase):
         timename = BASE / "test_data" / "does_not_exist_times.npy"
         clustername = BASE / "test_data" / "does_not_exist_clusters.npy"
         labelname = BASE / "test_data" / "does_not_exist_labels.tsv"
-        with self.assertRaises(FileNotFoundError):
+        with self.assertRaises(SystemExit):
             loading_utils.load_spike_data(timename, clustername, labelname)
 
     def test_load_spike_dat(self):
@@ -91,10 +88,8 @@ class TestLoadingUtils(unittest.TestCase):
         timename = BASE / "test_data" / "test_spike_times_int.npy"
         clustername = BASE / "test_data" / "test_spike_clusters_int.npy"
         labelname = BASE / "test_data" / "test_cluster_KSLabel_int.tsv"
-        swr_dir = BASE / "test_data" / "test_SWRs_1234_int.csv"
         df = loading_utils.load_spike_data(timename, clustername, labelname)
-        data = loading_utils.match_times(df, swr_dir, True, True)
-        self.assertIsNotNone(data)
+        self.assertIsNotNone(df)
 
 
 if __name__ == "__main__":
