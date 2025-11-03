@@ -93,6 +93,11 @@ def visualize_correlation_dictionary(
     corr_matrix :: dict
         A nested dictionary containing information about the
         co-firing of two neuron clusters.
+    save_directory :: str
+        The directory (path + filename) to save the correlation
+        matrix image to. If no argument is provided, the image
+        will not be saved and 'plt.show()' will be called
+        instead.
     """
 
     # Initializes grid with zeros in case no information is found for an id
