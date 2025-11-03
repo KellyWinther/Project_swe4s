@@ -1,6 +1,10 @@
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+
+# Prevents interactive output that can disrupt workflow
+import matplotlib
+matplotlib.use('Agg') # or 'Cairo', 'PS', 'PDF', 'SVG'
 import matplotlib.pyplot as plt
 
 
@@ -65,12 +69,18 @@ def make_correlation_dictionary(
             # The original dictionary value is modified, so we have to store it
             baseline_value = corr_dict[baseline_id][baseline_id]
             for compared_id in unique_ids:
-                corr_dict[baseline_id][compared_id] /= baseline_value
+                try:
+                    corr_dict[baseline_id][compared_id] /= baseline_value
+                except ZeroDivisionError:
+                    corr_dict[baseline_id][compared_id] = 0
 
     return corr_dict
 
 
-def visualize_correlation_dictionary(corr_matrix):
+def visualize_correlation_dictionary(
+        corr_matrix: dict,
+        save_directory: str = None,
+):
     """
     Plots a 'correlation matrix' plot for a given
     correlation dictionary. The x-axis shows the baseline
@@ -109,4 +119,10 @@ def visualize_correlation_dictionary(corr_matrix):
     # Replacing default xtick labels with cluster ids
     plt.xticks(range(len(keys)), labels=keys, rotation=90, fontsize=7)
     plt.yticks(range(len(keys)), labels=keys, fontsize=7)
-    plt.show()
+
+    if save_directory:
+        plt.savefig(save_directory, bbox_inches="tight")
+        plt.close()
+        plt.clf()
+    else:
+        plt.show()
