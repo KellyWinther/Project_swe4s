@@ -14,13 +14,35 @@ Important Notes and Scientific Considerations:
 When processing SWR data, a single neuron is identified by its 'cluster id' and a single unit of activity is called a 'spike'.
 Neurons come in a variety of types that play different roles in the biological system. Specifically, pyramidal neurons are known to maintain sequences in replay events. 
 
-## Retrieving the Data
-Please visit this Google Drive folder: https://drive.google.com/drive/folders/1FQuPhIkBRvUqAuGs4bC9ml2yeqDd4OmV?usp=sharing
-
+## Retrieving the Full and Test Data
 To pull the full, original datasets, you can run the following commands in your terminal...
+
 ```
-curl  """ COMING SOON """
+# Make sure the folder exists
+mkdir -p ../data/full_data
+
+# spike_clusters.npy
+curl -L -c cookies.txt 'https://drive.google.com/uc?export=download&id=1EE-K_qTDdqg2kXnYjSjWtT7Z7Ij-qiWj' \
+  -o ../data/full_data/spike_clusters.npy
+
+# spike_times.npy
+curl -L -b cookies.txt 'https://drive.google.com/uc?export=download&id=16abmhvYSPfO5jdg4UGa2h7J1FbHy-Nrn' \
+  -o ../data/full_data/spike_times.npy
+
+# cluster_KSLabel.tsv
+curl -L -b cookies.txt 'https://drive.google.com/uc?export=download&id=10voqiHiA9682dPxIwGgYHOwxBvS9gk7Z' \
+  -o ../data/full_data/cluster_KSLabel.tsv
+
+# SWRs_7744_partner_intro.csv
+curl -L -b cookies.txt 'https://drive.google.com/uc?export=download&id=13Pah9LbaJAhslmNOgMc8OlqpnUk1ZW4x' \
+  -o ../data/full_data/SWRs_7744_partner_intro.csv
+
+# Clean up cookies
+rm -f cookies.txt
 ```
+
+Additional files not listed above can be found here: https://drive.google.com/drive/folders/1FQuPhIkBRvUqAuGs4bC9ml2yeqDd4OmV?usp=sharing
+
 
 ## Quickstart
 If you would like to re-create our analysis, you can clone our respository by running...
