@@ -6,7 +6,7 @@ spike_df = load_spike_data()
 # Finds which spikes happened during a SWR
 df = match_times(
     spike_df,
-    "../data/SWRs_7744_partner_intro.csv",
+    "../data/full_data/SWRs_7744_partner_intro.csv",
     filter_event_data={"KSLabel": ["good"]},
     keep_event_columns=["Time", "Cluster ID"],
     progress=True,
