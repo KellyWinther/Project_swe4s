@@ -12,7 +12,7 @@ One of these signals is known as a __sharp wave ripple (SWR)__, which is a brief
 
 Important Notes and Scientific Considerations:
 When processing SWR data, a single neuron is identified by its 'cluster id' and a single unit of activity is called a 'spike'.
-Neurons come in a variety of types that play different roles in the biological system. Specifically, pyramidal neurons are known to maintain sequences in replay events. 
+Neurons come in a variety of types that play different roles in the biological system. Specifically, pyramidal neurons are known to maintain sequences in replay events. Future work will include 'cluster id type' data to filter for pyramidal neurons. 
 
 ## Retrieving the Full and Test Data
 To pull the full, original datasets, you can run the following commands in your terminal...
