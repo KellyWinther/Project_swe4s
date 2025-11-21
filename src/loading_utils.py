@@ -114,7 +114,7 @@ def filter_dataframe(
 
     If an empty dictionary is provided, then no filter will
     be applied.
-    
+
     Parameters:
     -----------
     df :: pd.DataFrame
@@ -144,7 +144,7 @@ def filter_dataframe(
                 f"Valid values must be a list, not '{type(valid_values)}'",
                 "Moving on without filtering."
             )
-    
+
     return df
 
 
