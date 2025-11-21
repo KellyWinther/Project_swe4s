@@ -86,10 +86,14 @@ def load_spike_data(
         sys.exit(1)
 
     # Loads cluster labels ('cluster_id' renamed to match later convention)
-    cluster_labels = cluster_labels.rename(columns={"cluster_id": "Cluster ID"})
+    cluster_labels = cluster_labels.rename(
+        columns={"cluster_id": "Cluster ID"}
+    )
 
     # Joins time, id, and label data into a single array
-    spike_df = pd.DataFrame({"Time": spike_times, "Cluster ID": spike_clusters})
+    spike_df = pd.DataFrame(
+        {"Time": spike_times, "Cluster ID": spike_clusters}
+    )
     spike_df = pd.merge(spike_df, cluster_labels, on="Cluster ID", how="left")
 
     return spike_df
@@ -182,7 +186,10 @@ def match_times(
         try:
             event_df = event_df[event_df[column_name].isin(valid_values)]
         except KeyError:
-            print(f"Column name '{column_name}' not found, moving on without filtering")
+            print(
+                f"Column '{column_name}' not found",
+                "moving on without filtering"
+            )
         except TypeError:
             print(f"Valid values must be a list, not '{type(valid_values)}'")
 
@@ -190,12 +197,17 @@ def match_times(
         try:
             window_df = window_df[window_df[column_name].isin(valid_values)]
         except KeyError:
-            print(f"Column name '{column_name}' not found, moving on without filtering")
+            print(
+                f"Column '{column_name}' not found",
+                "moving on without filtering"
+            )
         except TypeError:
             print(f"Valid values must be a list, not '{type(valid_values)}'")
 
     # Renames columns to be grammatically correct
-    renamed_event_columns = [f"Event {string}s" for string in keep_event_columns]
+    renamed_event_columns = [
+        f"Event {string}s" for string in keep_event_columns
+    ]
 
     # Initialize new columns properly (object dtype) to prevent Pandas errors
     for col in renamed_event_columns:
@@ -214,8 +226,9 @@ def match_times(
         end_time = np.array(window_df[time_interval_columns[1]])[idx]
         mask = (start_time <= event_times) & (event_times <= end_time)
 
-        # NOTE: Pandas is depricating their old indexing tricks, need to use '.at' now
-        for column, renamed_column in zip(keep_event_columns, renamed_event_columns):
+        for column, renamed_column in zip(
+            keep_event_columns, renamed_event_columns
+        ):
             data = list(event_df[column][mask])
             window_df.at[idx, renamed_column] = data
 

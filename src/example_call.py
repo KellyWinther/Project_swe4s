@@ -1,5 +1,7 @@
 from loading_utils import load_spike_data, match_times
-from analysis_utils import make_correlation_dictionary, visualize_correlation_dictionary
+
+from analysis_utils import make_correlation_dictionary
+from analysis_utils import visualize_correlation_dictionary
 
 spike_df = load_spike_data(
     time_dir="./data/full_data/spike_times.npy",
