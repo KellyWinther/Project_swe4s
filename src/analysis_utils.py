@@ -4,6 +4,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 import os
+import sys
 
 # Prevents interactive output that can disrupt workflow
 # matplotlib.use("Agg")
