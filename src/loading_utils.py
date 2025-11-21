@@ -99,6 +99,55 @@ def load_spike_data(
     return spike_df
 
 
+def filter_dataframe(
+    df: pd.DataFrame,
+    filter_dictionary: dict,
+) -> pd.DataFrame:
+    """
+    Attempts to filter down a DataFrame for a handful
+    of columns with user-specified "allowed values".
+    For example, if you wanted to filter a DataFrame
+    based on the "KSLabel" column, the 'filter_dictionary'
+    may look like...
+
+        {"KSLabel": ["good",]}
+
+    If an empty dictionary is provided, then no filter will
+    be applied.
+    
+    Parameters:
+    -----------
+    df :: pd.DataFrame
+        A DataFrame to filter down based on the value(s) of
+        a specified column(s).
+    filter_dictionary :: dict
+        Specifies which column to filter by (should be a
+        key in the dictionary) and what values should be
+        kept (should be a list of entries).
+
+    Returns:
+    --------
+    df :: pd.DataFrame
+        The final, filtered DataFrame.
+    """
+
+    for column_name, valid_values in filter_dictionary.items():
+        try:
+            df = df[df[column_name].isin(valid_values)]
+        except KeyError:
+            print(
+                f"Column '{column_name}' not found",
+                "moving on without filtering."
+            )
+        except TypeError:
+            print(
+                f"Valid values must be a list, not '{type(valid_values)}'",
+                "Moving on without filtering."
+            )
+    
+    return df
+
+
 def match_times(
     dataframe: pd.DataFrame,
     directory: str,
@@ -181,28 +230,8 @@ def match_times(
         assert FileNotFoundError(f"Filename '{directory}' not found")
         sys.exit(1)
 
-    # NOTE: These could probably be broken off into a separate function
-    for column_name, valid_values in filter_event_data.items():
-        try:
-            event_df = event_df[event_df[column_name].isin(valid_values)]
-        except KeyError:
-            print(
-                f"Column '{column_name}' not found",
-                "moving on without filtering"
-            )
-        except TypeError:
-            print(f"Valid values must be a list, not '{type(valid_values)}'")
-
-    for column_name, valid_values in filter_window_data.items():
-        try:
-            window_df = window_df[window_df[column_name].isin(valid_values)]
-        except KeyError:
-            print(
-                f"Column '{column_name}' not found",
-                "moving on without filtering"
-            )
-        except TypeError:
-            print(f"Valid values must be a list, not '{type(valid_values)}'")
+    event_df = filter_dataframe(event_df, filter_event_data)
+    window_df = filter_dataframe(window_df, filter_window_data)
 
     # Renames columns to be grammatically correct
     renamed_event_columns = [
