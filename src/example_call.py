@@ -6,6 +6,7 @@ from analysis_utils import visualize_correlation_dictionary
 import argparse
 import sys
 
+
 def main():
 
     parser = argparse.ArgumentParser()
@@ -35,6 +36,7 @@ def main():
 
     # Plots the data in a 2D correlation matrix
     visualize_correlation_dictionary(corr_matrix)
+
 
 if __name__ == "__main__":
     main()
