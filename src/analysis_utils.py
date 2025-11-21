@@ -432,7 +432,8 @@ def compute_stats_for_cluster(cid, true_val, perm_vals, rate, tail="two"):
         p_value = (
             np.sum(
                 np.abs(perm_vals - mean_perm) >= np.abs(true_val - mean_perm)
-            ) + 1
+            )
+            + 1
         ) / (len(perm_vals) + 1)
 
     # --- normalized counts ---

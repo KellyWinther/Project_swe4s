@@ -142,14 +142,14 @@ def filter_dataframe(
         except KeyError:
             print(
                 f"Column '{column_name}' not found",
-                "moving on without filtering."
+                "moving on without filtering.",
             )
 
         # Should only trigger if the value of filter dictionary is not a list
         except TypeError:
             print(
                 f"Valid values must be a list, not '{type(valid_values)}'",
-                "Moving on without filtering."
+                "Moving on without filtering.",
             )
 
     return df
@@ -171,7 +171,7 @@ def group_dataframes_by_time(
     should only contain a single time per row. The directory
     should point towards the 'window dataframe' which should
     contain two times per row (a start and stop time).
-    
+
     Parameters:
     -----------
     window_df :: pd.DataFrame
@@ -236,7 +236,9 @@ def group_dataframes_by_time(
     event_times = np.array(event_df[event_time_column])
 
     for idx in tqdm(
-        range(len(grouped_df)), desc="Checking Event Data", disable=not progress
+        range(len(grouped_df)),
+        desc="Checking Event Data",
+        disable=not progress,
     ):
 
         # Masking allows us to avoid excessive looping
@@ -340,12 +342,12 @@ def match_times(
     window_df = filter_dataframe(window_df, filter_window_data)
 
     grouped_df = group_dataframes_by_time(
-        window_df = window_df,
-        event_df = event_df,
-        event_time_column = event_time_column,
-        keep_event_columns = keep_event_columns,
-        time_interval_columns = time_interval_columns,
-        progress = progress,
+        window_df=window_df,
+        event_df=event_df,
+        event_time_column=event_time_column,
+        keep_event_columns=keep_event_columns,
+        time_interval_columns=time_interval_columns,
+        progress=progress,
     )
 
     return grouped_df
