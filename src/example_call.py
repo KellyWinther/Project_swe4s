@@ -18,7 +18,7 @@ def main():
         type=str,
         help="Filename (+ directory) containing spike time data",
         required=False,
-        default="data/full_data/spike_times.npy"
+        default="data/full_data/7744/PartnerIntro/spike_times.npy"
     )
 
     parser.add_argument(
@@ -26,7 +26,7 @@ def main():
         type=str,
         help="Filename (+ directory) containing spike cluster data",
         required=False,
-        default="data/full_data/spike_clusters.npy"
+        default="data/full_data/7744/PartnerIntro/spike_clusters.npy"
     )
 
     parser.add_argument(
@@ -34,7 +34,7 @@ def main():
         type=str,
         help="Filename (+ directory) containing KSlabel data",
         required=False,
-        default="data/full_data/cluster_KSLabel.tsv"
+        default="data/full_data/7744/PartnerIntro/cluster_KSLabel.tsv"
     )
 
     parser.add_argument(
@@ -42,7 +42,7 @@ def main():
         type=str,
         help="Filename (+ directory) containing SWR data",
         required=False,
-        default="data/full_data/SWRs_7744_partner_intro.csv"
+        default="data/full_data/7744/PartnerIntro/7744_Partnerintro_SWRs_ca2.csv"
     )
 
     args = parser.parse_args()

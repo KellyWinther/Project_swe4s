@@ -43,9 +43,9 @@ def time_in_range(
 
 
 def load_spike_data(
-    time_dir: str = "../data/full_data/spike_times.npy",
-    cluster_dir: str = "../data/full_data/spike_clusters.npy",
-    label_dir: str = "../data/full_data/cluster_KSLabel.tsv",
+    time_dir: str,
+    cluster_dir: str,
+    label_dir: str,
 ) -> pd.DataFrame:
     """
     Loads the time and clusters recorded
@@ -58,6 +58,8 @@ def load_spike_data(
         Path to time data (should include the file name)
     cluster_dir :: str
         Path to cluster ID data (should include the file name)
+    label_dir :: str
+        Path to the KSLabel data (should include the file name)
 
     Returns:
     --------
@@ -132,13 +134,18 @@ def filter_dataframe(
     """
 
     for column_name, valid_values in filter_dictionary.items():
+
         try:
             df = df[df[column_name].isin(valid_values)]
+
+        # Should only trigger if a user-provided column is not in df
         except KeyError:
             print(
                 f"Column '{column_name}' not found",
                 "moving on without filtering."
             )
+
+        # Should only trigger if the value of filter dictionary is not a list
         except TypeError:
             print(
                 f"Valid values must be a list, not '{type(valid_values)}'",
@@ -146,6 +153,104 @@ def filter_dataframe(
             )
 
     return df
+
+
+def group_dataframes_by_time(
+    window_df: pd.DataFrame,
+    event_df: pd.DataFrame,
+    event_time_column: str,
+    keep_event_columns: list,
+    time_interval_columns: list,
+    progress: bool,
+):
+    """
+    Checks if events contained in a user-provided DataFrame
+    contain times that fall within a window found in a
+    separate datafile. For consistency, the user-provided
+    DataFrame is referred to as the 'event dataframe' and
+    should only contain a single time per row. The directory
+    should point towards the 'window dataframe' which should
+    contain two times per row (a start and stop time).
+    
+    Parameters:
+    -----------
+    window_df :: pd.DataFrame
+        Dataframe containing at least one column
+        labeled 'Time' (or the string assigned to
+        'event_time_column'; assumes units of seconds).
+        This function will look for time ranges that
+        these times fall between.
+    event_df :: pd.DataFrame
+        Dataframe containing at least one column
+        labeled 'Time' (or the string assigned to
+        'event_time_column'; assumes units of seconds).
+        This function will look for time ranges that
+        these times fall between.
+    filter_event_data :: dict
+        Indicates which values to filter by in the 'event
+        dataframe.' Every key-value pair should be a column
+        name in the 'event dataframe' (key) and a list of
+        valid entries (value). If no arguments are provided,
+        then no filtering is applied.
+    filter_window_data :: dict
+        Indicates which values to filter by in the 'window
+        dataframe.' Every key-value pair should be a column
+        name in the 'window dataframe' (key) and a list of
+        valid entries (value). If no arguments are provided,
+        then no filtering is applied.
+    event_time_column :: str
+        The name of a column in the 'event dataframe' containing
+        time data (assumes units of seconds).
+    time_interval_column :: list
+        The names of two columns in the 'window dataframe'
+        containing the start and stop (both in seconds) of
+        a valid window. Events with a time falling between these
+        two values will be associated with the respective window.
+    keep_event_columns :: list
+        A list of columns to keep from the 'event dataframe'. For
+        example, if provided ['A', 'B'], then the values of 'A' and
+        'B' for all matched events will be saved in a list in the
+        returned dataframe.
+    progress :: bool
+        Disables / enables progress bar.
+
+    Returns:
+    --------
+    grouped_df :: pd.DataFramed
+    """
+
+    # Prevents us from replacing initial DataFrame
+    grouped_df = window_df.copy()
+
+    # Renames columns to be grammatically correct
+    renamed_event_columns = [
+        f"Event {string}s" for string in keep_event_columns
+    ]
+
+    # Initialize new columns properly (object dtype) to prevent Pandas errors
+    for col in renamed_event_columns:
+        grouped_df[col] = None
+        grouped_df[col] = grouped_df[col].astype("object")
+
+    # Extract all relevant time data (units of seconds)
+    event_times = np.array(event_df[event_time_column])
+
+    for idx in tqdm(
+        range(len(grouped_df)), desc="Checking Event Data", disable=not progress
+    ):
+
+        # Masking allows us to avoid excessive looping
+        start_time = np.array(grouped_df[time_interval_columns[0]])[idx]
+        end_time = np.array(grouped_df[time_interval_columns[1]])[idx]
+        mask = (start_time <= event_times) & (event_times <= end_time)
+
+        for column, renamed_column in zip(
+            keep_event_columns, renamed_event_columns
+        ):
+            data = list(event_df[column][mask])
+            grouped_df.at[idx, renamed_column] = data
+
+    return grouped_df
 
 
 def match_times(
@@ -230,35 +335,17 @@ def match_times(
         assert FileNotFoundError(f"Filename '{directory}' not found")
         sys.exit(1)
 
+    # If filter dictionary is empty, DataFrame is not modified
     event_df = filter_dataframe(event_df, filter_event_data)
     window_df = filter_dataframe(window_df, filter_window_data)
 
-    # Renames columns to be grammatically correct
-    renamed_event_columns = [
-        f"Event {string}s" for string in keep_event_columns
-    ]
+    grouped_df = group_dataframes_by_time(
+        window_df = window_df,
+        event_df = event_df,
+        event_time_column = event_time_column,
+        keep_event_columns = keep_event_columns,
+        time_interval_columns = time_interval_columns,
+        progress = progress,
+    )
 
-    # Initialize new columns properly (object dtype) to prevent Pandas errors
-    for col in renamed_event_columns:
-        window_df[col] = None
-        window_df[col] = window_df[col].astype("object")
-
-    # Extract all relevant time data (units of seconds)
-    event_times = np.array(event_df[event_time_column])
-
-    for idx in tqdm(
-        range(len(window_df)), desc="Checking Event Data", disable=not progress
-    ):
-
-        # Masking allows us to avoid excessive looping
-        start_time = np.array(window_df[time_interval_columns[0]])[idx]
-        end_time = np.array(window_df[time_interval_columns[1]])[idx]
-        mask = (start_time <= event_times) & (event_times <= end_time)
-
-        for column, renamed_column in zip(
-            keep_event_columns, renamed_event_columns
-        ):
-            data = list(event_df[column][mask])
-            window_df.at[idx, renamed_column] = data
-
-    return window_df
+    return grouped_df
