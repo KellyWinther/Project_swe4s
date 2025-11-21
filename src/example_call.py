@@ -13,16 +13,46 @@ def main():
 
     args = parser.parse_args()
 
+    parser.add_argument(
+        "--spike_time_filename",
+        type=str,
+        help="Filename (+ directory) containing spike time data",
+        required=True,
+    )
+
+    parser.add_argument(
+        "--cluster_filename",
+        type=str,
+        help="Filename (+ directory) containing spike cluster data",
+        required=True,
+    )
+
+    parser.add_argument(
+        "--KSlabel_filename",
+        type=str,
+        help="Filename (+ directory) containing KSlabel data",
+        required=True,
+    )
+
+    parser.add_argument(
+        "--swr_filename",
+        type=str,
+        help="Filename (+ directory) containing SWR data",
+        required=True,
+    )
+
+    args = parser.parse_args()
+
     spike_df = load_spike_data(
-        time_dir="./data/full_data/spike_times.npy",
-        cluster_dir="./data/full_data/spike_clusters.npy",
-        label_dir="./data/full_data/cluster_KSLabel.tsv",
+        time_dir=args.spike_time_filename,
+        cluster_dir=args.cluster_filename,
+        label_dir=args.KSlabel_filename,
     )
 
     # Finds which spikes happened during a SWR
     df = match_times(
         spike_df,
-        "./data/full_data/SWRs_7744_partner_intro.csv",
+        args.swr_filename,
         filter_event_data={"KSLabel": ["good"]},
         keep_event_columns=["Time", "Cluster ID"],
         progress=True,
