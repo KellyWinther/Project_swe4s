@@ -6,7 +6,7 @@ from tqdm import tqdm
 import os
 
 # Prevents interactive output that can disrupt workflow
-matplotlib.use("Agg")
+# matplotlib.use("Agg")
 
 
 def make_correlation_dictionary(
@@ -132,6 +132,47 @@ def visualize_correlation_dictionary(
         plt.clf()
     else:
         plt.show()
+
+
+def match_times(df, swr_dir=None, swr_df=None, only_keep_good=True, progress=True):
+    """
+    Assigns each SWR its list of spike times and cluster IDs.
+
+    You can pass either:
+      - swr_dir: path to SWR CSV
+      - swr_df: already-loaded SWR DataFrame (faster for permutations)
+    """
+    if swr_df is None and swr_dir is None:
+        raise ValueError("Provide either swr_dir or swr_df")
+
+    spike_df = df.copy()
+
+    # Load SWR data if path is given
+    if swr_df is None:
+        try:
+            swr_df = pd.read_csv(swr_dir)
+        except FileNotFoundError:
+            print(f"File not found: {swr_dir}")
+            sys.exit(1)
+    else:
+        swr_df = swr_df.copy()
+
+    if only_keep_good:
+        spike_df = spike_df[spike_df["KSLabel"] == "good"]
+
+    swr_df["Spike Times (s)"] = None
+    swr_df["Cluster IDs"] = None
+    swr_df = swr_df.astype({"Spike Times (s)": "object", "Cluster IDs": "object"})
+
+    spike_times = np.array(spike_df["Time"])
+    cluster_ids = np.array(spike_df["Cluster ID"])
+
+    for idx in tqdm(range(len(swr_df)), desc="Checking SWR Data", disable=not progress):
+        mask = (swr_df["Start"][idx] <= spike_times) & (spike_times <= swr_df["Stop"][idx])
+        swr_df.at[idx, "Spike Times (s)"] = list(spike_times[mask])
+        swr_df.at[idx, "Cluster IDs"] = list(cluster_ids[mask])
+
+    return swr_df
 
 
 def count_spikes(swr_df: pd.DataFrame, mode="all"):
@@ -310,7 +351,12 @@ def compute_permutation_counts(
     """
     for shift in tqdm(shifts, disable=not progress):
         shifted = apply_circular_shift(swr_df, shift, total_duration)
-        shifted = match_times(spike_df, shifted, only_keep_good=False)
+        shifted = match_times(
+            df=spike_df,
+            swr_df=shifted,
+            only_keep_good=False,
+            progress=False
+        )
         yield count_spikes(shifted, mode=mode)
 
 
