@@ -52,9 +52,11 @@ def prep_raster(df):
 
     return exp_df
 
+
 def select_ripples_to_plot(exp_df, ripple_index=None):
     """
-    Select spikes belonging to specific ripple indices from the exploded dataframe.
+    Select spikes belonging to specific ripple indices
+    from the exploded dataframe.
 
     Parameters
     ----------
@@ -74,7 +76,9 @@ def select_ripples_to_plot(exp_df, ripple_index=None):
         ripple_index = [ripple_index]
 
     if not hasattr(ripple_index, "__iter__"):
-        raise TypeError("ripple_index must be None, an int, or an iterable of ints.")
+        raise TypeError(
+            "ripple_index must be None, an int, or an iterable of ints."
+        )
 
     ripple_index = list(ripple_index)
 
@@ -88,7 +92,8 @@ def select_ripples_to_plot(exp_df, ripple_index=None):
     if invalid:
         raise ValueError(
             f"Invalid ripple index/indices {invalid}. "
-            f"Valid ripple indices are between {min(valid_indices)} and {max(valid_indices)}."
+            f"Valid ripple indices are between {min(valid_indices)} "
+            f"and {max(valid_indices)}."
         )
 
     # Now safe to subset
@@ -104,9 +109,10 @@ def plot_raster(
         color="black",
         tick_width=1,
         window=0.1,
-    ):
+):
     """
-    Plot a raster with evenly spaced cluster rows, labeled by actual cluster IDs.
+    Plot a raster with evenly spaced cluster rows, labeled by actual
+    cluster IDs.
     """
 
     if "t_rel" not in exp_df.columns:
@@ -118,7 +124,7 @@ def plot_raster(
 
     # Sort clusters for consistent vertical ordering
     clusters = sorted(raster_df["Cluster IDs"].unique())
-    
+
     # Map each cluster ID to a row index (0..N-1)
     cluster_to_row = {cid: i for i, cid in enumerate(clusters)}
     raster_df["cluster_row"] = raster_df["Cluster IDs"].map(cluster_to_row)
