@@ -19,12 +19,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install black flake8
+        pip install pycodestyle
 
-    - name: Run Black formatter check
+    - name: Run "pycodestyle" Style Check
       run: |
-        black --check .
-
-    - name: Run Flake8 style check
-      run: |
-        flake8 --max-line-length=88 .
+        pycodestyle .

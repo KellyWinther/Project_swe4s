@@ -75,7 +75,9 @@ def mega_raster(
 
     # --- Raster plot ---
     fig, ax = plt.subplots(figsize=(9, 6))
-    ax.scatter(plot_df["t_rel"], plot_df["cluster_id"], s=3, color="black", alpha=0.7)
+    ax.scatter(
+        plot_df["t_rel"], plot_df["cluster_id"], s=3, color="black", alpha=0.7
+    )
     ax.axvline(0, color="red", linestyle="--", linewidth=1)
 
     # --- Formatting ---
@@ -154,7 +156,9 @@ def single_raster(
     unique_clusters = sorted(set(cluster_ids))
 
     # Map each cluster ID to a scaled position
-    cluster_to_scaled = {cid: i * scale_y for i, cid in enumerate(unique_clusters)}
+    cluster_to_scaled = {
+        cid: i * scale_y for i, cid in enumerate(unique_clusters)
+    }
     scaled_y = [cluster_to_scaled[c] for c in cluster_ids]
 
     # === Raster plot for this ripple ===
