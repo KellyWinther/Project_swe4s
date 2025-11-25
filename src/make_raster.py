@@ -11,10 +11,10 @@ Generate ripple-aligned raster plots from spike data.
 
 example usage:
 python3 make_raster.py \
-    --spike_time "../data/full_data/7744/PartnerIntro/spike_times.npy" \
-    --clusters "../data/full_data/7744/PartnerIntro/spike_clusters.npy" \
-    --kslabels "../data/full_data/7744/PartnerIntro/cluster_KSLabel.tsv" \
-    --swr_csv "../data/full_data/7744/PartnerIntro/7744_Partnerintro_SWRs_ca2.csv" \
+    --spike_time ".../spike_times.npy" \
+    --clusters ".../spike_clusters.npy" \
+    --kslabels ".../cluster_KSLabel.tsv" \
+    --swr_csv ".../7744_Partnerintro_SWRs_ca2.csv" \
     --window 0.25 \
     --color black \
     --tick_width 3 \
@@ -22,6 +22,7 @@ python3 make_raster.py \
     --width 6 \
     --ripple_index 111
 '''
+
 
 def build_parser():
     parser = argparse.ArgumentParser(
@@ -69,7 +70,7 @@ def build_parser():
         "--window",
         type=float,
         default=0.25,
-        help="Window size in seconds (±window around ripple peak). Default=0.25"
+        help="Window size in sec. (±window around ripple peak). Default=0.25",
     )
 
     parser.add_argument(
@@ -126,7 +127,6 @@ def main():
     print("\n--- match_times() OUTPUT ---")
     print(df.head(4))
     # print(df.columns)  # Uncomment to see column names
-
 
     print(" 3. Preparing raster data (exploding spikes)")
     exp_df = prep_raster(df)
