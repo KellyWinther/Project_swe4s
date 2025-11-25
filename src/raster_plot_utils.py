@@ -54,7 +54,6 @@ def prep_raster(df):
     return exp_df
 
 
-
 def select_ripples_to_plot(exp_df, ripple_index=None):
     """
     Select specific ripples from the exploded raster dataframe
