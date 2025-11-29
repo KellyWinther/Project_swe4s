@@ -3,6 +3,20 @@ make_raster.py
 
 Generate ripple-aligned raster plots from spike and SWR data.
 
+Example usage: Test data
+---------------
+python3 example_make_raster.py \
+    --spike_time "../data/test_data/TEST_spike_times.npy" \
+    --clusters "../data/test_data/TEST_spike_clusters.npy" \
+    --kslabels "../data/test_data/TEST_cluster_KSLabel.tsv" \
+    --swr_csv "../data/test_data/TEST_SWRs_ca2.csv" \
+    --window 3 \
+    --color black \
+    --tick_width 100 \
+    --height 5 \
+    --width 7 \
+    --ripple_index 0 1
+
 Example usage: for all ripples
 ---------------
 python3 example_make_raster.py \
@@ -13,24 +27,24 @@ python3 example_make_raster.py \
         "../data/full_data/7744/PartnerIntro/7744_Partnerintro_SWRs_ca2.csv" \
     --window 0.1 \
     --color blue \
-    --tick_width 2 \
+    --tick_width 20 \
     --height 7 \
     --width 9
 
 Example usage: for specific ripples
 ---------------
 python3 example_make_raster.py \
-    --spike_time "../data/full_data/7744/PartnerIntro/spike_times.npy" \
-    --clusters "../data/full_data/7744/PartnerIntro/spike_clusters.npy" \
-    --kslabels "../data/full_data/7744/PartnerIntro/cluster_KSLabel.tsv" \
+    --spike_time "../data/full_data/7742/PartnerIntro/spike_times.npy" \
+    --clusters "../data/full_data/7742/PartnerIntro/spike_clusters.npy" \
+    --kslabels "../data/full_data/7742/PartnerIntro/cluster_KSLabel.tsv" \
     --swr_csv \
-        "../data/full_data/7744/PartnerIntro/7744_Partnerintro_SWRs_ca2.csv" \
+        "../data/full_data/7742/PartnerIntro/7742_Partnerintro_sleepyvole_SWRs_ca2.csv" \
     --window 0.1 \
-    --color red \
-    --tick_width 2 \
+    --color black \
+    --tick_width 20 \
     --height 7 \
     --width 9 \
-    --ripple_index 0 3 5 7
+    --ripple_index 350
 """
 
 import argparse
@@ -166,6 +180,9 @@ def main():
         keep_event_columns=["Time", "Cluster ID"],
         progress=True,
     )
+    head = swr_df.head(10)
+    print(" First ten rows of matched spike-SWR data:")
+    print(head)
 
     # 3. Construct exploded raster dataframe
     print("\n 3. Preparing raster data (exploding spikes)…")

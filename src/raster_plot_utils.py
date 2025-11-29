@@ -106,7 +106,7 @@ def plot_raster(
         height=7,
         width=9,
         color="black",
-        tick_width=3,
+        tick_width=10,
         window=0.1,
         ripple_index=None):
     """
@@ -198,16 +198,23 @@ def plot_raster(
     # Create the figure
     _, ax = plt.subplots(figsize=(width, height))
 
+    # Vertical line marking ripple peak (t_rel = 0)
+    ax.axvline(0,
+               color="red",
+               linestyle="--",
+               linewidth=1,
+               zorder=0
+    )
+
     ax.scatter(
         raster_df["t_rel"],
         raster_df["cluster_row"],
+        marker="|",
         s=tick_width,
         color=color,
-        alpha=0.7
+        alpha=0.7,
+        zorder=2
     )
-
-    # Vertical line marking ripple peak (t_rel = 0)
-    ax.axvline(0, color="red", linestyle="--", linewidth=2)
 
     # Axis formatting
     ax.set_xlim(-window, window)
