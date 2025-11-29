@@ -83,13 +83,13 @@ class TestLoadingUtils(unittest.TestCase):
 
     def test_load_spike_dat(self):
         timename = os.path.join(
-            BASE, "data", "test_data", "test_spike_times_int.npy"
+            BASE, "data", "test_data", "test_spike_times.npy"
         )
         clustername = os.path.join(
-            BASE, "data", "test_data", "test_spike_clusters_int.npy"
+            BASE, "data", "test_data", "test_spike_clusters.npy"
         )
         labelname = os.path.join(
-            BASE, "data", "test_data", "test_cluster_KSLabel_int.tsv"
+            BASE, "data", "test_data", "test_cluster_KSLabel.tsv"
         )
         df = loading_utils.load_spike_data(timename, clustername, labelname)
         self.assertIsNotNone(df)
@@ -101,13 +101,13 @@ class TestLoadingUtils(unittest.TestCase):
 
     def test_match_times_progress_good(self):
         timename = os.path.join(
-            BASE, "data", "test_data", "test_spike_times_int.npy"
+            BASE, "data", "test_data", "test_spike_times.npy"
         )
         clustername = os.path.join(
-            BASE, "data", "test_data", "test_spike_clusters_int.npy"
+            BASE, "data", "test_data", "test_spike_clusters.npy"
         )
         labelname = os.path.join(
-            BASE, "data", "test_data", "test_cluster_KSLabel_int.tsv"
+            BASE, "data", "test_data", "test_cluster_KSLabel.tsv"
         )
         df = loading_utils.load_spike_data(timename, clustername, labelname)
         self.assertIsNotNone(df)
