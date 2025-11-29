@@ -7,12 +7,24 @@ import argparse
 import sys
 import os
 
+'''
+Example call (not default file):
+
+python src/example_call.py \
+    --spike_time_filename "data/full_data/7742/ \
+    PartnerIntro/spike_times.npy" \
+    --cluster_filename "data/full_data/7742/ \
+        PartnerIntro/spike_clusters.npy" \
+    --KSlabel_filename "data/full_data/7742/ \
+        PartnerIntro/cluster_KSLabel.tsv" \
+    --swr_filename "data/full_data/7742/ \
+        PartnerIntro/7742_Partnerintro_sleepyvole_SWRs_ca2.csv"
+'''
+
 
 def main():
 
     parser = argparse.ArgumentParser()
-
-    args = parser.parse_args()
 
     parser.add_argument(
         "--spike_time_filename",
