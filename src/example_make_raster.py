@@ -38,7 +38,8 @@ python3 example_make_raster.py \
     --clusters "../data/full_data/7742/PartnerIntro/spike_clusters.npy" \
     --kslabels "../data/full_data/7742/PartnerIntro/cluster_KSLabel.tsv" \
     --swr_csv \
-        "../data/full_data/7742/PartnerIntro/7742_Partnerintro_sleepyvole_SWRs_ca2.csv" \
+        "../data/full_data/7742/PartnerIntro/ \
+            7742_Partnerintro_sleepyvole_SWRs_ca2.csv" \
     --window 0.1 \
     --color black \
     --tick_width 20 \

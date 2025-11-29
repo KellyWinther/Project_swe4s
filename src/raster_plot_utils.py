@@ -199,13 +199,15 @@ def plot_raster(
     _, ax = plt.subplots(figsize=(width, height))
 
     # Vertical line marking ripple peak (t_rel = 0)
-    ax.axvline(0,
-               color="red",
-               linestyle="--",
-               linewidth=1,
-               zorder=0
-    )
+    ax.axvline(
+        0,
+        color="red",
+        linestyle="--",
+        linewidth=1,
+        zorder=0
+        )
 
+    # Scatter plot of spikes
     ax.scatter(
         raster_df["t_rel"],
         raster_df["cluster_row"],

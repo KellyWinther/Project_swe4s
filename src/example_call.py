@@ -8,7 +8,7 @@ import sys
 import os
 
 '''
-Example call (not default file): 
+Example call (not default file):
 
 python src/example_call.py \
     --spike_time_filename "data/full_data/7742/ \
