@@ -2,7 +2,7 @@ name: Unit and Functional Tests
 
 env:
   PYTHONPATH: ${{ github.workspace }}
-  
+
 on:
   push:
   pull_request:
@@ -39,4 +39,4 @@ jobs:
           pip install pandas matplotlib numpy tqdm
 
       - run: |
-          bash test/test.sh
+          bash test/run_raster.sh
