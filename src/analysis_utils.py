@@ -6,15 +6,12 @@ from tqdm import tqdm
 import os
 import sys
 
-# Prevents interactive output that can disrupt workflow
-# matplotlib.use("Agg")
-
 
 def make_correlation_dictionary(
     df: pd.DataFrame,
     id_column_name: str = "Event Cluster IDs",
     normalize: bool = True,
-):
+) -> dict:
     """
     Generates a dictionary that indicates how many
     times each neuron cluster fired when any other
@@ -191,7 +188,7 @@ def match_up(
 def count_spikes(
     swr_df: pd.DataFrame,
     mode="all",
-):
+) -> dict:
     """
     Count spikes per cluster across SWRs.
 
@@ -243,7 +240,7 @@ def count_spikes(
 def compute_mean_firing_rates(
     spike_df: pd.DataFrame,
     total_duration: float = None,
-):
+) -> dict:
     """Compute mean firing rate (Hz) for each cluster."""
     if total_duration is None:
         total_duration = spike_df["Time"].max()
@@ -258,7 +255,7 @@ def compute_true_counts(
     spike_df: pd.DataFrame,
     total_duration: float,
     mode: str,
-):
+) -> tuple[dict, dict]:
     """
     Compute firing rates and observed spike counts during SWRs.
 
@@ -294,7 +291,7 @@ def compute_true_counts(
 def generate_shifts(
     n_permutations: int,
     shift_range_seconds: float,
-):
+) -> np.ndarray:
     """
     Generate random circular shift values for permutation testing.
 
@@ -321,7 +318,7 @@ def apply_circular_shift(
     swr_df: pd.DataFrame,
     shift: float,
     total_duration: float,
-):
+) -> dict:
     """
     Apply a circular temporal shift to SWR start/stop timestamps.
 
@@ -394,7 +391,7 @@ def compute_permutation_counts(
 def aggregate_permuted_counts(
     true_counts: dict,
     perm_generator,
-):
+) -> dict:
     """
     Collect permutation spike counts across all permutations.
 
@@ -426,7 +423,7 @@ def compute_stats_for_cluster(
     perm_vals: np.array,
     rate: float,
     tail: str = "two",
-):
+) -> dict:
     """
     Compute statistical metrics for one neuron.
 
@@ -494,7 +491,7 @@ def build_results_table(
     all_permuted_counts: dict,
     firing_rates: dict,
     tail: str = "two",
-):
+) -> pd.DataFrame:
     """
     Build a results DataFrame from permutation outcomes.
 
@@ -565,7 +562,7 @@ def circular_permutation_test_with_firing_rate(
     progress: bool = True,
     save_path: str = None,
     mode: str = "all",
-):
+) -> tuple[pd.DataFrame, dict, dict]:
     """
     Run a full circular-permutation test on SWR spike data.
 

@@ -3,7 +3,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def prep_raster(df: pd.DataFrame):
+def prep_raster(
+    df: pd.DataFrame
+) -> pd.DataFrame:
     """
     Prepare long-form spike ripple aligned data for raster plotting.
     Works directly on the output of match_times(), which includes:
@@ -57,7 +59,7 @@ def prep_raster(df: pd.DataFrame):
 def select_ripples_to_plot(
     exp_df: pd.DataFrame,
     ripple_index: None | int | list = None,
-):
+) -> pd.DataFrame:
     """
     Select specific ripples from the exploded raster dataframe
     for making a simple raster plot

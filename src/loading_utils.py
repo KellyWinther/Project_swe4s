@@ -162,7 +162,7 @@ def group_dataframes_by_time(
     keep_event_columns: list,
     time_interval_columns: list,
     progress: bool,
-):
+) -> pd.DataFrame:
     """
     Checks if events contained in a user-provided DataFrame
     contain times that fall within a window found in a
