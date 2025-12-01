@@ -11,6 +11,7 @@ import sequence_matching_utils as utils  # noqa
 BASE = 257
 MOD = (1 << 61) - 1
 
+
 class TestHashUtils(unittest.TestCase):
     def test_preprocess_lists(self):
 
