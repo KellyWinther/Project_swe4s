@@ -64,7 +64,7 @@ class TestPrepRaster(unittest.TestCase):
         cls.exp_df = SharedRasterTestData.exp_df
 
     def test_prep_raster_structure(self):
-        #prep_raster should return an exploded, long-form dataframe
+        # prep_raster should return an exploded long-form dataframe
         exp_df = self.exp_df
 
         # Basic columns
