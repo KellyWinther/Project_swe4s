@@ -18,7 +18,8 @@ jobs:
           pip install pandas matplotlib numpy tqdm
 
       - run: |
-          python test/test_utils.py
+          python test/test_load_and_analy_utils.py
+          python test/test_raster_utils.py
 
   run_func_test:
     runs-on: ubuntu-latest
