@@ -108,7 +108,8 @@ def plot_raster(
         color="black",
         tick_width=10,
         window=0.1,
-        ripple_index=None):
+        ripple_index=None,
+        save_path=None):
     """
     Plot a spike raster aligned to ripple peaks, using evenly spaced rows
     for each cluster while labeling the y-axis with the actual cluster IDs.
@@ -229,4 +230,9 @@ def plot_raster(
     ax.set_yticklabels(clusters)
 
     plt.tight_layout()
-    plt.show()
+
+    if save_path:
+        plt.savefig(save_path)
+        plt.close()
+    else:
+        plt.show()

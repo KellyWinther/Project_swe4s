@@ -11,3 +11,4 @@ dependencies:
   - pip
   - pip:
       - pillow
+  - snakemake >=7.30.4

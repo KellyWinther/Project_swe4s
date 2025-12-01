@@ -34,18 +34,18 @@ python3 example_make_raster.py \
 Example usage: for specific ripples
 ---------------
 python3 example_make_raster.py \
-    --spike_time "../data/full_data/7742/PartnerIntro/spike_times.npy" \
-    --clusters "../data/full_data/7742/PartnerIntro/spike_clusters.npy" \
-    --kslabels "../data/full_data/7742/PartnerIntro/cluster_KSLabel.tsv" \
+    --spike_time "../data/full_data/7744/PartnerIntro/spike_times.npy" \
+    --clusters "../data/full_data/7744/PartnerIntro/spike_clusters.npy" \
+    --kslabels "../data/full_data/7744/PartnerIntro/cluster_KSLabel.tsv" \
     --swr_csv \
-        "../data/full_data/7742/PartnerIntro/ \
-            7742_Partnerintro_sleepyvole_SWRs_ca2.csv" \
+        "../data/full_data/7744/PartnerIntro/7744_Partnerintro_SWRs_ca2.csv" \
     --window 0.1 \
-    --color black \
+    --color blue \
     --tick_width 20 \
     --height 7 \
     --width 9 \
-    --ripple_index 350
+    --ripple_index 110 \
+    --save_path "../data/full_data/7744/PartnerIntro/raster_ripple110.png"
 """
 
 import argparse
@@ -111,6 +111,16 @@ def build_parser():
         help=(
             "Optional ripple index or multiple indices (space-separated). "
             "If omitted, all ripples in the dataframe are plotted."
+        ),
+    )
+
+    parser.add_argument(
+        "--save_path",
+        type=str,
+        default=None,
+        help=(
+            "Optional path to save the raster plot image. "
+            "If omitted, the plot is displayed instead."
         ),
     )
 
@@ -197,7 +207,7 @@ def main():
     )
 
     # 5. Plot raster
-    print(" 5. Plotting raster…")
+    print(" 5. Creating raster… ")
     plot_raster(
         exp_df_sel,
         height=args.height,
@@ -206,6 +216,7 @@ def main():
         tick_width=args.tick_width,
         window=args.window,
         ripple_index=args.ripple_index,
+        save_path=args.save_path,
     )
 
 
