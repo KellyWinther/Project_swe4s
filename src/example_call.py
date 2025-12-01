@@ -4,6 +4,7 @@ from analysis_utils import make_correlation_dictionary
 from analysis_utils import visualize_correlation_dictionary
 
 import argparse
+import pandas as pd
 import sys
 import os
 
@@ -11,14 +12,12 @@ import os
 Example call (not default file):
 
 python src/example_call.py \
-    --spike_time_filename "data/full_data/7742/ \
-    PartnerIntro/spike_times.npy" \
-    --cluster_filename "data/full_data/7742/ \
-        PartnerIntro/spike_clusters.npy" \
-    --KSlabel_filename "data/full_data/7742/ \
-        PartnerIntro/cluster_KSLabel.tsv" \
-    --swr_filename "data/full_data/7742/ \
-        PartnerIntro/7742_Partnerintro_sleepyvole_SWRs_ca2.csv"
+    --spike_time_filename "data/full_data/7742/PartnerIntro/spike_times.npy" \
+    --cluster_filename "data/full_data/7742/PartnerIntro/spike_clusters.npy" \
+    --KSlabel_filename "data/full_data/7742/PartnerIntro/cluster_KSLabel.tsv" \
+    --swr_filename "data/full_data/7742/PartnerIntro/
+    7742_Partnerintro_sleepyvole_SWRs_ca2.csv" \
+    --output_csv True
 '''
 
 
@@ -61,6 +60,13 @@ def main():
         ),
     )
 
+    parser.add_argument(
+        "--output_csv",
+        type=bool,
+        default=False,
+        help="If True, saves the correlation matrix to CSV.",
+    )
+
     args = parser.parse_args()
 
     spike_df = load_spike_data(
@@ -83,6 +89,14 @@ def main():
 
     # Collects correlation data for neuron clusters
     corr_matrix = make_correlation_dictionary(df, normalize=False)
+
+    # optionally saves correlation matrix to CSV
+    if args.output_csv:
+        output_path = "test/correlation_matrix.csv"
+        # Converts correlation dictionary to df and saves to CSV
+        corr_df = pd.DataFrame.from_dict(corr_matrix, orient='index')
+        corr_df.to_csv(output_path)
+        print(f"\nCorrelation matrix saved to {output_path}")
 
     # Plots the data in a 2D correlation matrix
     visualize_correlation_dictionary(corr_matrix)

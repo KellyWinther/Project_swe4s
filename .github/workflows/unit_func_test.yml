@@ -40,3 +40,4 @@ jobs:
 
       - run: |
           bash test/run_raster.sh
+          bash test/run_analysis.sh
