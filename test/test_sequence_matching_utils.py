@@ -4,7 +4,7 @@ import numpy as np
 
 sys.path.append("src/")  # noqa
 
-import sequence_matching_utils as utils # noqa
+import sequence_matching_utils as utils  # noqa
 
 
 class TestHashUtils(unittest.TestCase):
@@ -34,6 +34,8 @@ class TestHashUtils(unittest.TestCase):
                 len(l1) <= len(l2)
             )
 
+    def test_intentional_failure(self):
+        self.assertTrue(True is False)
 
 if __name__ == "__main__":
     unittest.main()
