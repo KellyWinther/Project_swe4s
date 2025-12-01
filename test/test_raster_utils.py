@@ -80,21 +80,18 @@ class TestPrepRaster(unittest.TestCase):
     def test_prep_raster_t_rel_values(self):
         exp_df = self.exp_df
 
-        # sanity check rows by ripple_idx
         ripple0 = exp_df[exp_df["ripple_idx"] == 0]
         ripple1 = exp_df[exp_df["ripple_idx"] == 1]
 
-        # test expected t_rel values
-        self.assertSetEqual(
-            set(np.round(ripple0["t_rel"], 6)),
-            {-1.0, 0.0, 1.0},
-        )
+        # Force numeric dtype for github action 
+        t0 = ripple0["t_rel"].astype(float)
+        t1 = ripple1["t_rel"].astype(float)
 
-        # test expected t_rel values
-        self.assertSetEqual(
-            set(np.round(ripple1["t_rel"], 6)),
-            {-2.0, -1.0, 0.0, 1.0},
-        )
+        # Ripple 0, Peak = 2, SpikeTimes = 1,2,3, t_rel = -1,0,1
+        self.assertSetEqual(set(np.round(t0, 6)), {-1.0, 0.0, 1.0})
+
+        # Ripple 1, Peak = 43, SpikeTimes = 41,42,43,44, t_rel = -2,-1,0,1
+        self.assertSetEqual(set(np.round(t1, 6)), {-2.0, -1.0, 0.0, 1.0})
 
 
 class TestSelectRipples(unittest.TestCase):
