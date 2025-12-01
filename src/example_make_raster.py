@@ -15,7 +15,8 @@ python3 example_make_raster.py \
     --tick_width 100 \
     --height 5 \
     --width 7 \
-    --ripple_index 0 1
+    --ripple_index 0 1 \
+    --output_csv True
 
 Example usage: for all ripples
 ---------------
@@ -152,6 +153,13 @@ def build_parser():
         help="Color for spike markers.",
     )
 
+    parser.add_argument(
+        "--output_csv",
+        type=bool,
+        default=False,
+        help="If True, saves the exploded raster DataFrame to CSV.",
+
+    )
     return parser
 
 
@@ -207,6 +215,12 @@ def main():
         window=args.window,
         ripple_index=args.ripple_index,
     )
+
+    # 6. Optionally save exploded dataframe to CSV
+    if args.output_csv:
+        output_path = "test/exploded_raster_data.csv"
+        exp_df_sel.to_csv(output_path, index=False)
+        print(f"\nExploded raster DataFrame saved to {output_path}")
 
 
 if __name__ == "__main__":
