@@ -135,7 +135,7 @@ def visualize_correlation_dictionary(
         plt.show()
 
 
-def match_times(
+def match_up(
     df, swr_dir=None, swr_df=None, only_keep_good=True, progress=True
 ):
     """
@@ -360,7 +360,7 @@ def compute_permutation_counts(
     """
     for shift in tqdm(shifts, disable=not progress):
         shifted = apply_circular_shift(swr_df, shift, total_duration)
-        shifted = match_times(
+        shifted = match_up(
             df=spike_df, swr_df=shifted, only_keep_good=False, progress=False
         )
         yield count_spikes(shifted, mode=mode)
