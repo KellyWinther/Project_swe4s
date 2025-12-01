@@ -1,7 +1,6 @@
 import pandas as pd
 from ast import literal_eval
 import matplotlib.pyplot as plt
-import numpy as np
 
 
 def prep_raster(df: pd.DataFrame) -> pd.DataFrame:

@@ -50,7 +50,6 @@ python3 example_make_raster.py \
 """
 
 import argparse
-import pandas as pd
 
 from loading_utils import load_spike_data, match_times
 from raster_plot_utils import (
