@@ -1,4 +1,5 @@
 import pandas as pd
+from ast import literal_eval
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -12,9 +13,23 @@ def prep_raster(
         - 'Peak'
         - 'Event Times'
         - 'Event Cluster IDs'
-
     Adds:
         - ripple_idx  (for selecting ripples later)
+
+    Parameters:
+    -----------
+    df :: pd.DataFrame
+        A DataFrame containing three columns: 'Peak',
+        'Event Times', and 'Event Cluster IDs'. The
+        last of these three columns should contain a list
+        of integers.
+
+    Returns:
+    --------
+    exp_df :: pd.DataFrame
+        A modified version of the provided DataFrame where
+        the lists in 'Event Times' and 'Event Cluster IDs'
+        have been expanded out into separate rows.
     """
 
     if df is None:
@@ -41,7 +56,6 @@ def prep_raster(
     # Convert stringified lists if needed
     for col in ["Spike Times (s)", "Cluster IDs"]:
         if isinstance(df[col].iloc[0], str):
-            from ast import literal_eval
             df[col] = df[col].apply(literal_eval)
 
     # Expand each spike entry
@@ -62,17 +76,23 @@ def select_ripples_to_plot(
 ) -> pd.DataFrame:
     """
     Select specific ripples from the exploded raster dataframe
-    for making a simple raster plot
+    for making a simple raster plot.
 
     Parameters
     ----------
-    exp_df : pandas.DataFrame
+    exp_df :: pandas.DataFrame
         The exploded dataframe produced by prep_raster()
 
-    ripple_index : None, int, or list-like
+    ripple_index :: None, int, or list-like
         None = return all ripples
         int = return that ripple
         list = return multiple ripples
+
+    Returns:
+    --------
+    sub :: pd.DataFrame
+        A subset of the provided DataFrame only containing data
+        corresponding to the user-provided ripple index.
     """
     if ripple_index is None:
         return exp_df.copy()
@@ -121,7 +141,7 @@ def plot_raster(
 
     Parameters
     ----------
-    exp_df : pandas.DataFrame
+    exp_df :: pd.DataFrame
         Long-form exploded DataFrame produced by prep_raster().
         Must contain:
             - 't_rel' : float
@@ -131,26 +151,26 @@ def plot_raster(
             - 'ripple_idx' : int
                 Index of the ripple each spike belongs to.
 
-    height : float, optional (default=9)
+    height :: float, optional (default=9)
         Height of the matplotlib figure (in inches).
 
-    width : float, optional (default=6)
+    width :: float, optional (default=6)
         Width of the matplotlib figure (in inches).
 
-    color : str, optional (default="black")
+    color :: str, optional (default="black")
         Color of spike markers in the raster plot.
 
-    tick_width : float, optional (default=3)
+    tick_width :: float, optional (default=3)
         Marker size for each spike event.
 
-    window : float, optional (default=0.25)
+    window :: float, optional (default=0.25)
         Time window (in seconds) used for filtering spikes.
         Spikes with -window <= t_rel <= window will be plotted.
 
         Example:
             window=0.25 → shows spikes within ±250 ms of ripple peak.
 
-    ripple_index : None, int, or list of int, optional (default=None)
+    ripple_index :: None, int, or list of int, optional (default=None)
         Controls which ripple(s) the title refers to.
             - None:
                 Title shows "All SWR Spiking Activity..."
@@ -166,11 +186,6 @@ def plot_raster(
         cluster IDs are mapped to evenly spaced row positions (0,1,2,...).
     - Y-axis tick labels show the actual cluster IDs from the recording.
     - The function does not modify exp_df.
-
-    Returns
-    -------
-    None
-        Displays a matplotlib raster plot.
     """
 
     if "t_rel" not in exp_df.columns:

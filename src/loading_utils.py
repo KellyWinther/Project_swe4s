@@ -166,11 +166,10 @@ def group_dataframes_by_time(
     """
     Checks if events contained in a user-provided DataFrame
     contain times that fall within a window found in a
-    separate datafile. For consistency, the user-provided
-    DataFrame is referred to as the 'event dataframe' and
-    should only contain a single time per row. The directory
-    should point towards the 'window dataframe' which should
-    contain two times per row (a start and stop time).
+    separate DataFrame. For consistency, the DataFrame containing
+    a single time per row is referred to as the 'event dataframe',
+    and the DataFrame containing two times (start and stop of a
+    window) is referred to as the 'window dataframe'.
 
     Parameters:
     -----------
@@ -186,37 +185,27 @@ def group_dataframes_by_time(
         'event_time_column'; assumes units of seconds).
         This function will look for time ranges that
         these times fall between.
-    filter_event_data :: dict
-        Indicates which values to filter by in the 'event
-        dataframe.' Every key-value pair should be a column
-        name in the 'event dataframe' (key) and a list of
-        valid entries (value). If no arguments are provided,
-        then no filtering is applied.
-    filter_window_data :: dict
-        Indicates which values to filter by in the 'window
-        dataframe.' Every key-value pair should be a column
-        name in the 'window dataframe' (key) and a list of
-        valid entries (value). If no arguments are provided,
-        then no filtering is applied.
     event_time_column :: str
         The name of a column in the 'event dataframe' containing
         time data (assumes units of seconds).
-    time_interval_column :: list
-        The names of two columns in the 'window dataframe'
-        containing the start and stop (both in seconds) of
-        a valid window. Events with a time falling between these
-        two values will be associated with the respective window.
     keep_event_columns :: list
         A list of columns to keep from the 'event dataframe'. For
         example, if provided ['A', 'B'], then the values of 'A' and
         'B' for all matched events will be saved in a list in the
         returned dataframe.
+    time_interval_column :: list
+        The names of two columns in the 'window dataframe'
+        containing the start and stop (both in seconds) of
+        a valid window. Events with a time falling between these
+        two values will be associated with the respective window.
     progress :: bool
         Disables / enables progress bar.
 
     Returns:
     --------
     grouped_df :: pd.DataFramed
+        A copy of the 'window_df' where new columns have been
+        created for each event found within a given window.
     """
 
     # Prevents us from replacing initial DataFrame
