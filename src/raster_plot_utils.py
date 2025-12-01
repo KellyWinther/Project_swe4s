@@ -1,12 +1,9 @@
 import pandas as pd
 from ast import literal_eval
 import matplotlib.pyplot as plt
-import numpy as np
 
 
-def prep_raster(
-    df: pd.DataFrame
-) -> pd.DataFrame:
+def prep_raster(df: pd.DataFrame) -> pd.DataFrame:
     """
     Prepare long-form spike ripple aligned data for raster plotting.
     Works directly on the output of match_times(), which includes:
@@ -48,10 +45,12 @@ def prep_raster(
     df["ripple_idx"] = df.index
 
     # Rename match_times output to standard names
-    df = df.rename(columns={
-        "Event Times": "Spike Times (s)",
-        "Event Cluster IDs": "Cluster IDs"
-    })
+    df = df.rename(
+        columns={
+            "Event Times": "Spike Times (s)",
+            "Event Cluster IDs": "Cluster IDs",
+        }
+    )
 
     # Convert stringified lists if needed
     for col in ["Spike Times (s)", "Cluster IDs"]:
@@ -103,7 +102,8 @@ def select_ripples_to_plot(
 
     if not hasattr(ripple_index, "__iter__"):
         raise TypeError(
-            "ripple_index must be None, an int, or an iterable of ints.")
+            "ripple_index must be None, an int, or an iterable of ints."
+        )
 
     ripple_index = list(ripple_index)
 
@@ -225,8 +225,8 @@ def plot_raster(
         color="red",
         linestyle="--",
         linewidth=1,
-        zorder=0
-        )
+        zorder=0,
+    )
 
     # Scatter plot of spikes
     ax.scatter(
@@ -236,7 +236,7 @@ def plot_raster(
         s=tick_width,
         color=color,
         alpha=0.7,
-        zorder=2
+        zorder=2,
     )
 
     # Axis formatting
