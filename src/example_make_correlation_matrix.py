@@ -1,12 +1,11 @@
+import argparse
+import pandas as pd
+import os
+
 from loading_utils import load_spike_data, match_times
 
 from analysis_utils import make_correlation_dictionary
 from analysis_utils import visualize_correlation_dictionary
-
-import argparse
-import pandas as pd
-import sys
-import os
 
 '''
 Example call (not default file):
