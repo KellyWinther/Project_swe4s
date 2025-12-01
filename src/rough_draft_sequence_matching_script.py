@@ -178,10 +178,11 @@ overlap_matrix = np.zeros((len(swr_cluster_df), len(behavior_cluster_df)))
 #             normalize=True,
 #         )
 
-import numpy as np
 
 def lccs_rabin_karp(l1, l2, normalize=True):
-    """Longest Common Contiguous Subsequence using rolling hash + binary search."""
+    """
+    Longest Common Contiguous Subsequence using rolling hash + binary search.
+    """
 
     # Convert to Python lists of ints (not NumPy int64)
     l1 = list(map(int, l1))
@@ -262,9 +263,10 @@ for x, bseq in enumerate(tqdm(behavior_lists)):
 
 
 # Plotting
-plt.rcParams["figure.figsize"] = (8, 12)
+plt.rcParams["figure.figsize"] = (8, 8)
 plt.imshow(overlap_matrix, cmap="inferno", aspect="auto", interpolation="none")
 plt.xlabel("Behavior DataFrame Index")
 plt.ylabel("SWR DataFrame Index")
 plt.colorbar()
+plt.tight_layout()
 plt.show()
