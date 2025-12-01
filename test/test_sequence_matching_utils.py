@@ -7,6 +7,10 @@ sys.path.append("src/")  # noqa
 import sequence_matching_utils as utils  # noqa
 
 
+# Default parameters used in 'lccs_rabin_karp'
+BASE = 257
+MOD = (1 << 61) - 1
+
 class TestHashUtils(unittest.TestCase):
     def test_preprocess_lists(self):
 
@@ -36,15 +40,11 @@ class TestHashUtils(unittest.TestCase):
 
     def test_compute_pow_base(self):
 
-        # Default parameters used in 'lccs_rabin_karp'
-        base = 257
-        mod = (1 << 61) - 1
-
         # Sanity check for a small number powers
         pow_base = utils._compute_pow_base(
             n=3,
-            base=base,
-            mod=mod,
+            base=BASE,
+            mod=MOD,
         )
         self.assertEqual(
             pow_base, [1, 257, 66049, 16974593],
@@ -52,18 +52,28 @@ class TestHashUtils(unittest.TestCase):
 
         # Ensures that all n < 0 return an empty list
         self.assertEqual(
-            utils._compute_pow_base(-1, base, mod),
-            utils._compute_pow_base(-2, base, mod),
+            utils._compute_pow_base(-1, BASE, MOD),
+            utils._compute_pow_base(-2, BASE, MOD),
         )
 
         # Ensures that all n = 0 returns [1]
         self.assertEqual(
-            utils._compute_pow_base(0, base, mod),
+            utils._compute_pow_base(0, BASE, MOD),
             [1],
         )
 
     def test_prefix_hash(self):
-        pass
+
+        valid_array = [0, 4, 20, 200, 3]
+
+        # Ensures that '_prefix_hash' works with lists and np.arrays
+        self.assertTrue(
+            utils._prefix_hash(valid_array, BASE, MOD),
+            utils._prefix_hash(np.array(valid_array), BASE, MOD),
+        )
+
+        # Ensures that an empty list does return a hash (0)
+        self.assertEqual(utils._prefix_hash([], BASE, MOD), [0])
 
     def test_get_hash(self):
         pass
