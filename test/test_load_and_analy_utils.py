@@ -172,12 +172,12 @@ class TestAnalysisUtils(unittest.TestCase):
 
         result_df, true_counts, perm_counts = (
             au.circular_permutation_test_with_firing_rate(
-            swr_df=self.event_df_analysis,
-            spike_df=self.spike_df,
-            n_permutations=4,
-            shift_range_seconds=0.5,
-            progress=False,
-            mode="all",
+                swr_df=self.event_df_analysis,
+                spike_df=self.spike_df,
+                n_permutations=4,
+                shift_range_seconds=0.5,
+                progress=False,
+                mode="all",
             )
         )
 

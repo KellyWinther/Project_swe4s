@@ -83,7 +83,7 @@ class TestPrepRaster(unittest.TestCase):
         ripple0 = exp_df[exp_df["ripple_idx"] == 0]
         ripple1 = exp_df[exp_df["ripple_idx"] == 1]
 
-        # Force numeric dtype for github action 
+        # Force numeric dtype for github action
         t0 = ripple0["t_rel"].astype(float)
         t1 = ripple1["t_rel"].astype(float)
 
