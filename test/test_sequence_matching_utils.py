@@ -35,7 +35,32 @@ class TestHashUtils(unittest.TestCase):
             )
 
     def test_compute_pow_base(self):
-        pass
+
+        # Default parameters used in 'lccs_rabin_karp'
+        base = 257
+        mod = (1 << 61) - 1
+
+        # Sanity check for a small number powers
+        pow_base = utils._compute_pow_base(
+            n=3,
+            base=base,
+            mod=mod,
+        )
+        self.assertEqual(
+            pow_base, [1, 257, 66049, 16974593],
+        )
+
+        # Ensures that all n < 0 return an empty list
+        self.assertEqual(
+            utils._compute_pow_base(-1, base, mod),
+            utils._compute_pow_base(-2, base, mod),
+        )
+
+        # Ensures that all n = 0 returns [1]
+        self.assertEqual(
+            utils._compute_pow_base(0, base, mod),
+            [1],
+        )
 
     def test_prefix_hash(self):
         pass
@@ -51,6 +76,7 @@ class TestHashUtils(unittest.TestCase):
 
     def test_lccs_rabin_karp(self):
         pass
+
 
 if __name__ == "__main__":
     unittest.main()
