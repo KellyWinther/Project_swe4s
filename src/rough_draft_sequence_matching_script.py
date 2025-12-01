@@ -76,33 +76,33 @@ individual = "7742"
 # Defines all the file locations used in this pipeline
 # NOTE: If you use this for '7744', you will need to remove 'sleepyvole'
 spike_time_filename = os.path.join(
-    "../data/full_data/",
+    "../data/full_data",
     individual,
-    "/PartnerIntro/spike_times.npy",
+    "PartnerIntro/spike_times.npy",
 )
+
 cluster_filename = os.path.join(
-    "../data/full_data/",
+    "../data/full_data",
     individual,
-    "/PartnerIntro/spike_clusters.npy",
+    "PartnerIntro/spike_clusters.npy",
 )
+
 KSlabel_filename = os.path.join(
-    "../data/full_data/",
+    "../data/full_data",
     individual,
-    "/PartnerIntro/cluster_KSLabel.tsv",
+    "PartnerIntro/cluster_KSLabel.tsv",
 )
 behavior_filename = os.path.join(
-    "../data/full_data/",
+    "../data/full_data",
     individual,
-    "/PartnerIntro/",
-    individual,
-    "_Partnerintro_sleepyvole_events_with_indices.csv",
+    "PartnerIntro",
+    f"{individual}_Partnerintro_sleepyvole_events_with_indices.csv",
 )
 swr_filename = os.path.join(
-    "../data/full_data/",
+    "../data/full_data",
     individual,
-    "/PartnerIntro/",
-    individual,
-    "_Partnerintro_sleepyvole_SWRs_ca2.csv",
+    "PartnerIntro",
+    f"{individual}_Partnerintro_sleepyvole_SWRs_ca2.csv",
 )
 
 # Loads spike data and filters it based on 'KSLabel'
@@ -152,34 +152,117 @@ swr_cluster_df = group_dataframes_by_time(
     progress=True,
 )
 
-N = 30
-behavior_cluster_df = behavior_cluster_df.head(N)
-swr_cluster_df = swr_cluster_df.head(N)
+# N = 30
+# behavior_cluster_df = behavior_cluster_df.head(N)
+# swr_cluster_df = swr_cluster_df.head(N)
 
 overlap_matrix = np.zeros((len(swr_cluster_df), len(behavior_cluster_df)))
 
-# THIS IS THE CORE LOGIC FOR FINDING OVERLAPS
-for x in tqdm(range(len(behavior_cluster_df))):
+# # THIS IS THE CORE LOGIC FOR FINDING OVERLAPS
+# for x in tqdm(range(len(behavior_cluster_df))):
 
-    # Using a variable to prevent repeated lookups in the dataframe
-    behavior_sequence = behavior_cluster_df.at[x, "Event Cluster IDs"]
+#     # Using a variable to prevent repeated lookups in the dataframe
+#     behavior_sequence = behavior_cluster_df.at[x, "Event Cluster IDs"]
 
-    for y in range(len(swr_cluster_df)):
+#     for y in range(len(swr_cluster_df)):
 
-        if (len(behavior_sequence) == 0) or (
-            len(swr_cluster_df.at[y, "Event Cluster IDs"]) == 0
-        ):
+#         if (len(behavior_sequence) == 0) or (
+#             len(swr_cluster_df.at[y, "Event Cluster IDs"]) == 0
+#         ):
+#             continue
+
+#         # Indexing is flipped due to the way 'overlap matrix' was initialized
+#         overlap_matrix[y, x] = find_max_overlap_length(
+#             swr_cluster_df.at[y, "Event Cluster IDs"],
+#             behavior_sequence,
+#             normalize=True,
+#         )
+
+import numpy as np
+
+def lccs_rabin_karp(l1, l2, normalize=True):
+    """Longest Common Contiguous Subsequence using rolling hash + binary search."""
+
+    # Convert to Python lists of ints (not NumPy int64)
+    l1 = list(map(int, l1))
+    l2 = list(map(int, l2))
+
+    # Ensure l1 is shorter
+    if len(l1) > len(l2):
+        l1, l2 = l2, l1
+
+    n1, n2 = len(l1), len(l2)
+    if n1 == 0:
+        return 0
+
+    base = 257
+    mod = (1 << 61) - 1   # large Mersenne prime
+
+    # Precompute base powers (Python ints → no overflow)
+    pow_base = [1] * (n1 + 1)
+    for i in range(1, n1 + 1):
+        pow_base[i] = (pow_base[i-1] * base) % mod
+
+    # Prefix hash using Python ints
+    def prefix_hash(arr):
+        H = [0] * (len(arr) + 1)
+        for i, v in enumerate(arr):
+            H[i+1] = (H[i] * base + (v + 1)) % mod
+        return H
+
+    H1 = prefix_hash(l1)
+    H2 = prefix_hash(l2)
+
+    def get_hash(H, i, L):
+        return (H[i + L] - (H[i] * pow_base[L]) % mod) % mod
+
+    def has_match(L):
+        if L == 0:
+            return True
+        if L > n1:
+            return False
+
+        seen = {get_hash(H1, i, L) for i in range(n1 - L + 1)}
+
+        for j in range(n2 - L + 1):
+            if get_hash(H2, j, L) in seen:
+                return True
+        return False
+
+    # Binary search longest L
+    lo, hi = 0, n1
+    while lo < hi:
+        mid = (lo + hi + 1) // 2
+        if has_match(mid):
+            lo = mid
+        else:
+            hi = mid - 1
+
+    return lo / n1 if normalize else lo
+
+
+behavior_lists = behavior_cluster_df["Event Cluster IDs"].tolist()
+swr_lists = swr_cluster_df["Event Cluster IDs"].tolist()
+
+for x, bseq in enumerate(tqdm(behavior_lists)):
+    if not bseq:
+        continue
+
+    bset = set(bseq)
+
+    for y, sseq in enumerate(swr_lists):
+        if not sseq:
             continue
 
-        # Indexing is flipped due to the way 'overlap matrix' was initialized
-        overlap_matrix[y, x] = find_max_overlap_length(
-            swr_cluster_df.at[y, "Event Cluster IDs"],
-            behavior_sequence,
-            normalize=True,
-        )
+        # quick elimination based on shared tokens
+        if bset.isdisjoint(sseq):
+            continue
+
+        overlap_matrix[y, x] = lccs_rabin_karp(sseq, bseq, normalize=True)
+
 
 # Plotting
-plt.rcParams["figure.figsize"] = (8, 8)
+plt.rcParams["figure.figsize"] = (8, 12)
 plt.imshow(overlap_matrix, cmap="inferno", aspect="auto", interpolation="none")
 plt.xlabel("Behavior DataFrame Index")
 plt.ylabel("SWR DataFrame Index")
