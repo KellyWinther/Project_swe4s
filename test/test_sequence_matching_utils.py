@@ -86,8 +86,29 @@ class TestHashUtils(unittest.TestCase):
         pass
 
     def test_lccs_rabin_karp(self):
-        pass
 
+        # Overlap of 4 entries [1, 2, 3, 4]
+        l1 = [0, 0, 1, 2, 3, 4, 0, 0]
+        l2 = [1, 2, 3, 4, 5]
+
+        # Sanity check for a valid call
+        overlap, sequence = utils.lccs_rabin_karp(
+            l1=l1, l2=l2, normalize=True, return_sequence=True,
+        )
+        self.assertEqual(overlap, 0.8)
+        self.assertEqual(sequence, [1, 2, 3, 4])
+
+        # Ensures that 'return_sequence' behaves as expected
+        overlap = utils.lccs_rabin_karp(
+            l1=l1, l2=l2, normalize=True, return_sequence=False,
+        )
+        self.assertEqual(overlap, 0.8)
+
+        # Checks that 'normalize=False' works as intended
+        overlap = utils.lccs_rabin_karp(
+            l1=l1, l2=l2, normalize=False, return_sequence=False,
+        )
+        self.assertEqual(overlap, 4)
 
 if __name__ == "__main__":
     unittest.main()
