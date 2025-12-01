@@ -1,25 +1,23 @@
 import unittest
-from pathlib import Path
-import sys
-import pandas as pd
 import os
+import sys
+from pathlib import Path
+
 import numpy as np
+import pandas as pd
 
-BASE = Path(__file__).resolve().parent.parent
-sys.path.append(str(BASE / "src"))
-
-import analysis_utils as au 
-import loading_utils as lu
-
+from src import analysis_utils as au
+from src import loading_utils as lu
 
 DATA_DIR = "data/test_data"
 
 PATH_SPIKE_TS = os.path.join(DATA_DIR, "test_spike_times.npy")
 PATH_SPIKE_CL = os.path.join(DATA_DIR, "test_spike_clusters.npy")
-PATH_KSLABEL  = os.path.join(DATA_DIR, "test_cluster_KSLabel.tsv")
-PATH_SWR      = os.path.join(DATA_DIR, "TEST_SWRs_ca2.csv")
+PATH_KSLABEL = os.path.join(DATA_DIR, "test_cluster_KSLabel.tsv")
+PATH_SWR = os.path.join(DATA_DIR, "TEST_SWRs_ca2.csv")
 
 BAD_PATH = os.path.join(DATA_DIR, "nonexistent_file.npy")
+
 
 class SharedTestData:
 
@@ -45,7 +43,7 @@ class SharedTestData:
         cls.swr_df = pd.read_csv(PATH_SWR)
 
         # Build event_df for loading_utils tests
-            # Event Times, Event Cluster IDs
+        # Event Times, Event Cluster IDs
         cls.event_df_loading = lu.match_times(
             dataframe=cls.spike_df,
             directory=PATH_SWR,
@@ -55,7 +53,7 @@ class SharedTestData:
         )
 
         # Build event_df for analysis_utils tests
-            # Spike Times (s), Cluster IDs
+        # Spike Times (s), Cluster IDs
         cls.event_df_analysis = au.match_times(
             df=cls.spike_df,
             swr_df=cls.swr_df,
@@ -64,7 +62,6 @@ class SharedTestData:
         )
 
         cls.ready = True
-
 
 
 #  TEST CLASS 1: loading_utils
@@ -102,7 +99,7 @@ class TestLoadingUtils(unittest.TestCase):
     # filter_dataframe with invalid column
     def test_filter_dataframe_missing_column(self):
         df = lu.filter_dataframe(self.spike_df, {"NOPE": ["x"]})
-        self.assertEqual(len(df), len(self.spike_df)) 
+        self.assertEqual(len(df), len(self.spike_df))
 
     # match_times and ensure output columns exist
     def test_match_times_event_columns(self):
@@ -113,22 +110,20 @@ class TestLoadingUtils(unittest.TestCase):
     # match_times — test no matches (empty SWR window)
     def test_match_times_empty_window(self):
         # Make SWR file with bad times
-        fake_swr = pd.DataFrame({"Start":[99999], "Stop":[100000]})
+        fake_swr = pd.DataFrame({"Start": [99999], "Stop": [100000]})
         out = lu.group_dataframes_by_time(
             window_df=fake_swr,
             event_df=self.spike_df,
             event_time_column="Time",
             keep_event_columns=["Time"],
-            time_interval_columns=["Start","Stop"],
+            time_interval_columns=["Start", "Stop"],
             progress=False
         )
         self.assertEqual(out.iloc[0]["Event Times"], [])
 
 
-
 #  TEST CLASS 2: analysis_utils
 class TestAnalysisUtils(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls):
         SharedTestData.build()
@@ -171,11 +166,11 @@ class TestAnalysisUtils(unittest.TestCase):
 
     # count_spikes with failure on missing columns
     def test_count_spikes_missing_column(self):
-        bad_df = pd.DataFrame({"Spike Times (s)":[[1,2]]})
+        bad_df = pd.DataFrame({"Spike Times (s)": [[1, 2]]})
         with self.assertRaises(KeyError):
             au.count_spikes(bad_df)
 
-    # circular_permutation_test_with_firing_rate 
+    # circular_permutation_test_with_firing_rate
     def test_circular_permutation_pipeline(self):
 
         result_df, true_counts, perm_counts = au.circular_permutation_test_with_firing_rate(
@@ -196,7 +191,7 @@ class TestAnalysisUtils(unittest.TestCase):
 
     # circular_permutation_test_with_firing_rate thats very short
     def test_circular_permutation_short_total_duration(self):
-        # Create very short fake spike_df 
+        # Create very short fake spike_df
         small = self.spike_df.copy()
         small["Time"] = small["Time"] * 0
 
