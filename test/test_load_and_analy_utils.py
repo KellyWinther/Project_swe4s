@@ -51,7 +51,7 @@ class SharedTestData:
 
         # Build event_df for analysis_utils tests
         # Spike Times (s), Cluster IDs
-        cls.event_df_analysis = au.match_times(
+        cls.event_df_analysis = au.match_up(
             df=cls.spike_df,
             swr_df=cls.swr_df,
             only_keep_good=True,
