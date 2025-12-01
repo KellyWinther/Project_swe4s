@@ -1,4 +1,5 @@
 import os
+import ast
 import sys
 import pandas as pd
 import matplotlib
@@ -51,8 +52,8 @@ rule all:
     input:
         # 1. All Raster Plots
         expand("outputs/{dataset}/ripple_raster.png", dataset=DATASETS),
-        # # 2. All Correlation Matrices
-        # expand("outputs/{dataset}/correlation_matrix.png", dataset=DATASETS)
+        # 2. All Correlation Matrices
+        expand("outputs/{dataset}/correlation_matrix.png", dataset=DATASETS)
 
 rule load_spike_data:
     input:
@@ -94,26 +95,31 @@ rule match_spikes_with_SWRs:
 
         df.to_csv(output.matched_data, index=False)
 
-# rule generate_correlation_matrix:
-#     input:
-#         matched_data="outputs/{dataset}/matched_SWR_data.csv"
-#     output:
-#         matrix="outputs/{dataset}/correlation_matrix.png"
-#     run:
-#         # Load the matched SWR data
-#         df = pd.read_csv(input.matched_data)
+rule generate_correlation_matrix:
+    input:
+        matched_data="outputs/{dataset}/matched_SWR_data.csv"
+    output:
+        matrix="outputs/{dataset}/correlation_matrix.png"
+    run:
+        # Load the matched SWR data
+        df = pd.read_csv(input.matched_data)
 
-#         # Generate the correlation dictionary
-#         corr_dictionary = make_correlation_dictionary(
-#             df,
-#             normalize=False,
-#         )
+        # Converts 'Event Cluster IDs' strings to Python lists
+        df["Event Cluster IDs"] = df["Event Cluster IDs"].apply(
+            lambda s: [int(x) for x in ast.literal_eval(s)]
+        )
 
-#         # Visualize and save the correlation matrix
-#         visualize_correlation_dictionary(
-#             corr_dictionary,
-#             save_directory=output.matrix,
-#         )
+        # Generate the correlation dictionary
+        corr_dictionary = make_correlation_dictionary(
+            df,
+            normalize=False,
+        )        
+
+        # Visualize and save the correlation matrix
+        visualize_correlation_dictionary(
+            corr_dictionary,
+            save_directory=output.matrix,
+        )
 
 rule generate_raster_plot:
     """Generates a ripple-aligned raster plot for a single dataset."""
