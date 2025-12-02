@@ -7,13 +7,13 @@ import os
 def _preprocess_lists(
     l1: list,
     l2: list,
-):
+) -> tuple:
     """
     Convert inputs to Python ints and ensure the shorter list is first.
 
     Parameters
     ----------
-    l1, l2 : list
+    l1, l2 :: list
         Lists of integers or values convertible to integers.
 
     Returns
@@ -31,22 +31,22 @@ def _compute_pow_base(
     n: int,
     base: int,
     mod: int,
-):
+) -> list:
     """
     Precompute powers of the base modulo `mod`.
 
     Parameters
     ----------
-    n : int
+    n :: int
         Maximum exponent needed.
-    base : int
+    base :: int
         Rolling hash base.
-    mod : int
+    mod :: int
         Rolling hash modulus.
 
     Returns
     -------
-    list
+    pow_base :: list
         pow_base[i] = base^i % mod
     """
     pow_base = [1] * (n + 1)
@@ -56,20 +56,20 @@ def _compute_pow_base(
 
 
 def _prefix_hash(
-    arr,
-    base,
-    mod
-):
+    arr: list,
+    base: int,
+    mod: int,
+) -> list:
     """
     Compute prefix hashes for an array.
 
     Parameters
     ----------
-    arr : list
+    arr :: list
         Input list of integers.
-    base : int
+    base :: int
         Rolling hash base.
-    mod : int
+    mod :: int
         Rolling hash modulus.
 
     Returns
@@ -83,21 +83,27 @@ def _prefix_hash(
     return H
 
 
-def _get_hash(H, i, L, pow_base, mod):
+def _get_hash(
+    H: list,
+    i: int,
+    L: int,
+    pow_base: list,
+    mod: int,
+) -> int:
     """
     Retrieve hash for subarray of length L starting at index i.
 
     Parameters
     ----------
-    H : list
+    H :: list
         Prefix hash array.
-    i : int
+    i :: int
         Start index.
-    L : int
+    L :: int
         Length of the window.
-    pow_base : list
+    pow_base :: list
         Precomputed powers of base modulo mod.
-    mod : int
+    mod :: int
         Modulus.
 
     Returns
@@ -108,7 +114,15 @@ def _get_hash(H, i, L, pow_base, mod):
     return (H[i + L] - (H[i] * pow_base[L]) % mod) % mod
 
 
-def _has_match(L, n1, n2, H1, H2, pow_base, mod):
+def _has_match(
+    L: int,
+    n1: int,
+    n2: int,
+    H1: list,
+    H2: list,
+    pow_base: list,
+    mod: int,
+) -> bool:
     """
     Determine whether a contiguous match of length L exists in both lists.
 
@@ -147,7 +161,17 @@ def _has_match(L, n1, n2, H1, H2, pow_base, mod):
     return False
 
 
-def _recover_sequence(L, l1, l2, H1, H2, n1, n2, pow_base, mod):
+def _recover_sequence(
+    L: int,
+    l1: list,
+    l2: list,
+    H1: list,
+    H2: list,
+    n1: int,
+    n2: int,
+    pow_base: list,
+    mod: int,
+) -> list:
     """
     Recover the actual longest common contiguous subsequence of length L.
 
@@ -196,7 +220,7 @@ def lccs_rabin_karp(
     l2: list,
     normalize: bool = True,
     return_sequence: bool = False
-):
+) -> tuple[int | float, list]:
     """
     Finds the longest contiguous sequence of integers shared between
     two lists using Rabin–Karp rolling hashing with binary search.
