@@ -1,5 +1,4 @@
 name: swe4s_project_env
-name: project_env
 channels:
   - conda-forge
 dependencies:
