@@ -1,98 +1,257 @@
-import numpy as np
-import matplotlib as plt
-import pandas as pd
-from tqdm import tqdm
-import os
+
+"""
+Sequence Overlap Analysis
+
+This script:
+1. Loads spike data, behavior windows, and SWR windows.
+2. Computes cluster-ID sequences per window.
+3. Calculates normalized overlap using Rabin Karp LCCS.
+4. Produces a heatmap of SWR behavior overlaps.
+"""
+
 import argparse
+import os
+import sys
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from tqdm import tqdm
 
-from loading_utils import *
-from analysis_utils import *
-from sequence_matching_utils import *
+from loading_utils import load_spike_data
+from loading_utils import filter_dataframe
+from loading_utils import group_dataframes_by_time
+from sequence_matching_utils import lccs_rabin_karp
 
 
-def main():
+# build complex file paths for test or full data set
+def get_base_directory(individual):
+    """
+    Return correct data root depending on individual.
 
-    parser = argparse.ArgumentParser()
+    Parameters
+    ----------
+    individual :: str
+
+    Returns
+    -------
+    str
+        Base directory path.
+    """
+    if individual == "test":
+        return "data/test_data"
+    return "data/full_data"
+
+
+def build_file_paths(individual, stimuli):
+    """
+    Construct all required file paths depending on individual.
+
+    For real animals (7742, 7744):
+        data/full_data/<ID>/stimuli/<files>
+
+    For test:
+        data/test_data/<test files>
+    """
+    base = get_base_directory(individual)
+
+    # files for test data sets
+    if individual == "test":
+        root = base
+        return {
+            "spike_times": os.path.join(root, "test_spike_times.npy"),
+            "spike_clusters": os.path.join(root, "test_spike_clusters.npy"),
+            "kslabels": os.path.join(root, "test_cluster_KSLabel.tsv"),
+            "behavior_csv": os.path.join(
+                root, "test_events_with_indices.csv"
+            ),
+            "swr_csv": os.path.join(
+                root, "test_SWRs_ca2.csv"
+            ),
+        }
+
+    # files from full_data: like 7742 or 7744
+    stimuli = stimuli
+    extra_tag = "_sleepyvole" if individual == "7742" else ""
+    root = os.path.join(base, individual, stimuli)
+
+    return {
+        "spike_times": os.path.join(root, "spike_times.npy"),
+        "spike_clusters": os.path.join(root, "spike_clusters.npy"),
+        "kslabels": os.path.join(root, "cluster_KSLabel.tsv"),
+        "behavior_csv": os.path.join(
+            root,
+            f"{individual}_{stimuli}{extra_tag}_events_with_indices.csv",
+        ),
+        "swr_csv": os.path.join(
+            root,
+            f"{individual}_{stimuli}{extra_tag}_SWRs_ca2.csv",
+        ),
+    }
+
+
+# load data
+def load_data(paths):
+    """
+    Load spike, behavior, and SWR data.
+
+    Parameters
+    ----------
+    paths :: dict
+
+    Returns
+    -------
+    (DataFrame, DataFrame, DataFrame)
+    """
+    try:
+        spike_df = load_spike_data(
+            time_dir=paths["spike_times"],
+            cluster_dir=paths["spike_clusters"],
+            label_dir=paths["kslabels"],
+        )
+    except FileNotFoundError:
+        print("Error: Spike data files not found.")
+        sys.exit(1)
+
+    spike_df = filter_dataframe(spike_df, {"KSLabel": ["good"]})
+    spike_df = spike_df.reset_index(drop=True)
+
+    try:
+        behavior_df = pd.read_csv(paths["behavior_csv"])
+    except FileNotFoundError:
+        print("Error: Behavior CSV not found.")
+        sys.exit(1)
+
+    try:
+        swr_df = pd.read_csv(paths["swr_csv"])
+    except FileNotFoundError:
+        print("Error: SWR CSV not found.")
+        sys.exit(1)
+
+    return spike_df, behavior_df, swr_df
+
+
+# filter behavior dataframe for relevant events
+def preprocess_behavior_df(df):
+    """
+    Filter and rename time columns in behavior dataframe.
+
+    Parameters
+    ----------
+    df :: pandas.DataFrame
+
+    Returns
+    -------
+    pandas.DataFrame
+    """
+    df = filter_dataframe(
+        df,
+        {"EventType": ["social interaction", "cup interaction"]},
+    )
+    df = df.reset_index(drop=True)
+
+    df[["indexStart", "indexEnd"]] /= 2500.0
+    df = df.rename(columns={"indexStart": "Start", "indexEnd": "Stop"})
+    return df
+
+
+def compute_overlap_matrix(behavior_lists, swr_lists):
+    """
+    Compute normalized LCCS overlap matrix.
+
+    Parameters
+    ----------
+    behavior_lists :: list
+    swr_lists :: list
+
+    Returns
+    -------
+    numpy.ndarray
+    """
+    overlap = np.zeros((len(swr_lists), len(behavior_lists)))
+
+    for bx, bseq in enumerate(tqdm(behavior_lists)):
+        if not bseq:
+            continue
+
+        bset = set(bseq)
+
+        for sy, sseq in enumerate(swr_lists):
+            if not sseq:
+                continue
+
+            if bset.isdisjoint(sseq):
+                continue
+
+            overlap[sy, bx] = lccs_rabin_karp(sseq, bseq, normalize=True)
+
+    return overlap
+
+
+def plot_overlap_matrix(matrix):
+    """
+    Visualize the SWR behavior replay of behavior activity.
+
+    Parameters
+    ----------
+    matrix :: numpy.ndarray
+    """
+    plt.figure(figsize=(8, 8))
+    plt.imshow(
+        matrix,
+        cmap="inferno",
+        aspect="auto",
+        interpolation="none",
+        origin="lower",
+    )
+    plt.xlabel("Behavior Window Index")
+    plt.ylabel("SWR Window Index")
+    plt.colorbar(label="Normalized Overlap")
+    plt.tight_layout()
+    plt.show()
+
+
+def parse_arguments():
+
+    parser = argparse.ArgumentParser(
+        description="Compute SWR–behavior overlap matrices."
+    )
+
     parser.add_argument(
         "--individual",
         type=str,
-        help="Individual ID to load data for (only 7742 or 7744)",
         required=True,
+        help="Individual ID ('7742', '7744', or 'test').",
     )
+
+    parser.add_argument(
+        "--stimuli",
+        type=str,
+        required=True,
+        help="Social stimuli folder name for full data "
+        "(default: PartnerIntro).",
+    )
+
     args = parser.parse_args()
 
-    # Prevents unecessary computation down the line
-    if args.individual not in ["7742", "7744"]:
-        print(f"Individual must be '7742' or '7744', not {args.individual}")
+    if args.individual not in ["7742", "7744", "test"]:
+        print("Error: individual must be '7742', '7744', or 'test'.")
         sys.exit(1)
 
-    # Handles slight variation in filenames between individuals
-    extra_tag = ""
-    if args.individual == "7742":
-        extra_tag = "_sleepyvole"
+    if args.stimuli not in ["PartnerIntro", "SSIntro"]:
+        print("Error: stimuli must be 'PartnerIntro' or 'SSIntro'.")
+        sys.exit(1)
 
-    # Defines all the file locations used in this pipeline
-    spike_time_filename = os.path.join(
-        "../data/full_data",
-        args.individual,
-        "PartnerIntro/spike_times.npy",
-    )
-    cluster_filename = os.path.join(
-        "../data/full_data",
-        args.individual,
-        "PartnerIntro/spike_clusters.npy",
-    )
-    KSlabel_filename = os.path.join(
-        "../data/full_data",
-        args.individual,
-        "PartnerIntro/cluster_KSLabel.tsv",
-    )
-    behavior_filename = os.path.join(
-        "../data/full_data",
-        args.individual,
-        "PartnerIntro",
-        f"{args.individual}_Partnerintro{extra_tag}_events_with_indices.csv",
-    )
-    swr_filename = os.path.join(
-        "../data/full_data",
-        args.individual,
-        "PartnerIntro",
-        f"{args.individual}_Partnerintro{extra_tag}_SWRs_ca2.csv",
-    )
+    return args
 
-    # Loads spike data and filters it based on 'KSLabel'
-    spike_df = load_spike_data(
-        time_dir=spike_time_filename,
-        cluster_dir=cluster_filename,
-        label_dir=KSlabel_filename,
-    )
-    spike_df = filter_dataframe(
-        spike_df,
-        {"KSLabel": ["good"]},
-    ).reset_index(drop=True)
 
-    # Loads in behavior / SWR CSV data
-    behavior_df = pd.read_csv(behavior_filename)
-    swr_df = pd.read_csv(swr_filename)
+def main():
+    args = parse_arguments()
+    paths = build_file_paths(args.individual, args.stimuli)
 
-    # Prepares / reformats the behavior dataframe
-    behavior_df = filter_dataframe(
-        behavior_df,
-        filter_dictionary={"EventType": [
-            "social interaction", "cup interaction"
-        ]},
-    )
-    behavior_df[["indexStart", "indexEnd"]] /= 2500
-    behavior_df = behavior_df.rename(
-        columns={"indexStart": "Start", "indexEnd": "Stop"}
-    )
+    spike_df, behavior_df, swr_df = load_data(paths)
+    behavior_df = preprocess_behavior_df(behavior_df)
 
-    # Since filtering may have dropped rows, we need to reset indices
-    spike_df = spike_df.reset_index(drop=True)
-    behavior_df = behavior_df.reset_index(drop=True)
-
-    # Will locate events that occur within the respective windows
-    behavior_cluster_df = group_dataframes_by_time(
+    behavior_clusters = group_dataframes_by_time(
         window_df=behavior_df,
         event_df=spike_df,
         event_time_column="Time",
@@ -100,7 +259,8 @@ def main():
         time_interval_columns=["Start", "Stop"],
         progress=True,
     )
-    swr_cluster_df = group_dataframes_by_time(
+
+    swr_clusters = group_dataframes_by_time(
         window_df=swr_df,
         event_df=spike_df,
         event_time_column="Time",
@@ -109,40 +269,12 @@ def main():
         progress=True,
     )
 
-    overlap_matrix = np.zeros((len(swr_cluster_df), len(behavior_cluster_df)))
-
-    behavior_lists = behavior_cluster_df["Event Cluster IDs"].tolist()
-    swr_lists = swr_cluster_df["Event Cluster IDs"].tolist()
-
-    for x, bseq in enumerate(tqdm(behavior_lists)):
-        if not bseq:
-            continue
-
-        bset = set(bseq)
-
-        for y, sseq in enumerate(swr_lists):
-            if not sseq:
-                continue
-
-            # quick elimination based on shared tokens
-            if bset.isdisjoint(sseq):
-                continue
-
-            overlap_matrix[y, x] = lccs_rabin_karp(sseq, bseq, normalize=True)
-
-    # Plotting
-    plt.rcParams["figure.figsize"] = (8, 8)
-    plt.imshow(
-        overlap_matrix,
-        cmap="inferno",
-        aspect="auto",
-        interpolation="none",
-        origin="lower",
+    overlap = compute_overlap_matrix(
+        behavior_clusters["Event Cluster IDs"].tolist(),
+        swr_clusters["Event Cluster IDs"].tolist(),
     )
-    plt.xlabel("Behavior DataFrame Index")
-    plt.ylabel("SWR DataFrame Index")
-    plt.colorbar()
-    plt.show()
+
+    plot_overlap_matrix(overlap)
 
 
 if __name__ == "__main__":
