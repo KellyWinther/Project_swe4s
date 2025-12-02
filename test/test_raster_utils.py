@@ -1,12 +1,14 @@
 import unittest
 from pathlib import Path
 import os
-
 import numpy as np
 import pandas as pd
+import sys
 
-from src import loading_utils as lu
-from src import raster_plot_utils as rpu
+sys.path.append("src/")  # noqa
+
+import loading_utils as lu
+import raster_plot_utils as rpu
 
 
 DATA_DIR = "data/test_data"

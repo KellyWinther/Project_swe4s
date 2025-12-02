@@ -3,8 +3,12 @@ import os
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from src import analysis_utils as au
-from src import loading_utils as lu
+import sys
+
+sys.path.append("src/")  # noqa
+
+import analysis_utils as au
+import loading_utils as lu
 
 DATA_DIR = "data/test_data"
 
