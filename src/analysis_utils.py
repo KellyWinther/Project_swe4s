@@ -1,20 +1,16 @@
 import numpy as np
 import pandas as pd
-import matplotlib
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 import os
 import sys
-
-# Prevents interactive output that can disrupt workflow
-# matplotlib.use("Agg")
 
 
 def make_correlation_dictionary(
     df: pd.DataFrame,
     id_column_name: str = "Event Cluster IDs",
     normalize: bool = True,
-):
+) -> dict:
     """
     Generates a dictionary that indicates how many
     times each neuron cluster fired when any other
@@ -136,8 +132,12 @@ def visualize_correlation_dictionary(
 
 
 def match_up(
-    df, swr_dir=None, swr_df=None, only_keep_good=True, progress=True
-):
+    df: pd.DataFrame,
+    swr_dir: str = None,
+    swr_df: pd.DataFrame = None,
+    only_keep_good: bool = True,
+    progress: bool = True,
+) -> pd.DataFrame:
     """
     Assigns each SWR its list of spike times and cluster IDs.
 
@@ -184,7 +184,10 @@ def match_up(
     return swr_df
 
 
-def count_spikes(swr_df: pd.DataFrame, mode="all"):
+def count_spikes(
+    swr_df: pd.DataFrame,
+    mode: str = "all",
+) -> dict:
     """
     Count spikes per cluster across SWRs.
 
@@ -234,7 +237,8 @@ def count_spikes(swr_df: pd.DataFrame, mode="all"):
 
 
 def compute_mean_firing_rates(
-    spike_df: pd.DataFrame, total_duration: float = None
+    spike_df: pd.DataFrame,
+    total_duration: float = None
 ):
     """Compute mean firing rate (Hz) for each cluster."""
     if total_duration is None:
@@ -245,7 +249,12 @@ def compute_mean_firing_rates(
     return firing_rates.to_dict()
 
 
-def compute_true_counts(swr_df, spike_df, total_duration, mode):
+def compute_true_counts(
+    swr_df: pd.DataFrame,
+    spike_df: pd.DataFrame,
+    total_duration: float,
+    mode: str,
+) -> tuple[dict, dict]:
     """
     Compute firing rates and observed spike counts during SWRs.
 
@@ -253,13 +262,10 @@ def compute_true_counts(swr_df, spike_df, total_duration, mode):
     ----------
     swr_df : pd.DataFrame
         DataFrame containing SWR windows and their associated spike times.
-
     spike_df : pd.DataFrame
         Full spike train dataset containing at least 'Time' and 'ClusterID'.
-
     total_duration : float
         Total recording duration in seconds.
-
     mode : {"first", "all"}
         Spike counting mode:
         - "first": count only the first spike per SWR.
@@ -269,7 +275,6 @@ def compute_true_counts(swr_df, spike_df, total_duration, mode):
     -------
     firing_rates : dict
         Mapping of cluster_id -> firing rate (Hz).
-
     true_counts : dict
         Mapping of cluster_id -> observed spike count in true SWRs.
     """
@@ -278,7 +283,10 @@ def compute_true_counts(swr_df, spike_df, total_duration, mode):
     return firing_rates, true_counts
 
 
-def generate_shifts(n_permutations, shift_range_seconds):
+def generate_shifts(
+    n_permutations: int,
+    shift_range_seconds: float,
+) -> np.ndarray:
     """
     Generate random circular shift values for permutation testing.
 
@@ -286,7 +294,6 @@ def generate_shifts(n_permutations, shift_range_seconds):
     ----------
     n_permutations : int
         Number of permutations to generate.
-
     shift_range_seconds : float
         Range of uniform shifts. Values will be sampled from:
         [-shift_range_seconds, +shift_range_seconds].
@@ -301,7 +308,11 @@ def generate_shifts(n_permutations, shift_range_seconds):
     )
 
 
-def apply_circular_shift(swr_df, shift, total_duration):
+def apply_circular_shift(
+    swr_df: pd.DataFrame,
+    shift: float,
+    total_duration: float,
+):
     """
     Apply a circular temporal shift to SWR start/stop timestamps.
 
@@ -309,10 +320,8 @@ def apply_circular_shift(swr_df, shift, total_duration):
     ----------
     swr_df : pd.DataFrame
         Original SWR dataframe with 'Start' and 'Stop' columns.
-
     shift : float
         Amount of time (seconds) to shift SWR windows.
-
     total_duration : float
         Total duration of the recording. Used for modulo wrap-around.
 
@@ -328,7 +337,12 @@ def apply_circular_shift(swr_df, shift, total_duration):
 
 
 def compute_permutation_counts(
-    shifts, swr_df, spike_df, total_duration, mode, progress=True
+    shifts: list | np.ndarray,
+    swr_df: pd.DataFrame,
+    spike_df: pd.DataFrame,
+    total_duration: float,
+    mode: str,
+    progress: bool = True,
 ):
     """
     Generate spike-count dictionaries for each permutation.
@@ -337,19 +351,14 @@ def compute_permutation_counts(
     ----------
     shifts : array-like
         List/array of shift values to apply for each permutation.
-
     swr_df : pd.DataFrame
         Original SWR dataframe.
-
     spike_df : pd.DataFrame
         Full spike dataset, used for matching spikes to shifted SWRs.
-
     total_duration : float
         Recording duration for circular wrap-around.
-
     mode : {"first", "all"}
         Spike counting mode for SWR windows.
-
     progress : bool, default True
         Whether to show tqdm progress bar.
 
@@ -366,7 +375,10 @@ def compute_permutation_counts(
         yield count_spikes(shifted, mode=mode)
 
 
-def aggregate_permuted_counts(true_counts, perm_generator):
+def aggregate_permuted_counts(
+    true_counts: dict,
+    perm_generator: dict,
+) -> dict:
     """
     Collect permutation spike counts across all permutations.
 
@@ -374,7 +386,6 @@ def aggregate_permuted_counts(true_counts, perm_generator):
     ----------
     true_counts : dict
         Observed true spike counts per cluster. Needed to initialize keys.
-
     perm_generator : iterable of dict
         Yields dictionaries of permutation spike counts.
 
@@ -392,7 +403,13 @@ def aggregate_permuted_counts(true_counts, perm_generator):
     return out
 
 
-def compute_stats_for_cluster(cid, true_val, perm_vals, rate, tail="two"):
+def compute_stats_for_cluster(
+    cid: int | float,
+    true_val: int,
+    perm_vals: list | np.ndarray,
+    rate: float,
+    tail: str = "two",
+):
     """
     Compute statistical metrics for one neuron.
 
@@ -400,16 +417,12 @@ def compute_stats_for_cluster(cid, true_val, perm_vals, rate, tail="two"):
     ----------
     cid : int or float
         Cluster ID.
-
     true_val : int
         Observed spike count in the true SWR dataset.
-
     perm_vals : array-like
         Null distribution of spike counts for this neuron.
-
     rate : float
         Neuron firing rate in Hz.
-
     tail : {"one", "two"}
         Type of p-value test:
         - "one" one-sided is greater
@@ -456,7 +469,10 @@ def compute_stats_for_cluster(cid, true_val, perm_vals, rate, tail="two"):
 
 
 def build_results_table(
-    true_counts, all_permuted_counts, firing_rates, tail="two"
+    true_counts: dict,
+    all_permuted_counts: dict,
+    firing_rates: dict,
+    tail: str = "two",
 ):
     """
     Build a results DataFrame from permutation outcomes.
@@ -465,13 +481,10 @@ def build_results_table(
     ----------
     true_counts : dict
         Observed spike counts per cluster.
-
     all_permuted_counts : dict
         Permutation null distribution for each cluster.
-
     firing_rates : dict
         Firing rates per cluster in Hz.
-
     tail : {"one", "two"}
         Tailedness of p-value calculation.
 
@@ -490,7 +503,10 @@ def build_results_table(
     return pd.DataFrame(rows)
 
 
-def save_results(result_df, save_path):
+def save_results(
+    result_df: pd.DataFrame,
+    save_path: str,
+):
     """
     Save results as a CSV file if a save path is provided.
 
@@ -498,13 +514,8 @@ def save_results(result_df, save_path):
     ----------
     result_df : pd.DataFrame
         DataFrame of permutation metrics.
-
     save_path : str or None
         Path to save the CSV file. If None, no file is saved.
-
-    Returns
-    -------
-    None
     """
     if save_path is None:
         return
@@ -516,16 +527,16 @@ def save_results(result_df, save_path):
 # Full wrapper function to create circular permutation test
 # and histograms for individual neuron spike data in SWRs
 def circular_permutation_test_with_firing_rate(
-    swr_df,
-    spike_df,
-    tail="two",
-    total_duration=None,
-    n_permutations=1000,
-    shift_range_seconds=3.0,
-    progress=True,
-    save_path=None,
-    mode="all",
-):
+    swr_df: pd.DataFrame,
+    spike_df: pd.DataFrame,
+    tail: str = "two",
+    total_duration: float = None,
+    n_permutations: int = 1000,
+    shift_range_seconds: float = 3.0,
+    progress: bool = True,
+    save_path: str = None,
+    mode: str = "all",
+) -> tuple[pd.DataFrame, dict, dict]:
     """
     Run a full circular-permutation test on SWR spike data.
 
@@ -542,28 +553,20 @@ def circular_permutation_test_with_firing_rate(
     ----------
     swr_df : pd.DataFrame
         SWR dataframe with spike timings per event.
-
     spike_df : pd.DataFrame
         Full spike dataset (Time, ClusterID).
-
     tail : {"one", "two"}, default "two"
         Tailedness of p-value test.
-
     total_duration : float, optional
         Recording duration in seconds. If None, uses max spike time.
-
     n_permutations : int, default 1000
         Number of circular permutations.
-
     shift_range_seconds : float, default 3.0
         Uniform shift range (±shift_range_seconds).
-
     progress : bool, default True
         Whether to show tqdm progress bar.
-
     save_path : str or None
         Output path for saving results CSV.
-
     mode : {"first", "all"}, default "all"
         Spike counting strategy for SWRs.
         first: count only first spike per SWR.
@@ -573,10 +576,8 @@ def circular_permutation_test_with_firing_rate(
     -------
     result_df : pd.DataFrame
         Final results table per cluster.
-
     true_counts : dict
         Observed spike counts per cluster.
-
     all_permuted_counts : dict
         Permutation null distributions per cluster.
     """

@@ -3,7 +3,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def prep_raster(df):
+def prep_raster(
+    df: pd.DataFrame
+) -> pd.DataFrame:
     """
     Prepare long-form spike ripple aligned data for raster plotting.
     Works directly on the output of match_times(), which includes:
@@ -54,7 +56,10 @@ def prep_raster(df):
     return exp_df
 
 
-def select_ripples_to_plot(exp_df, ripple_index=None):
+def select_ripples_to_plot(
+    exp_df: pd.DataFrame,
+    ripple_index: int = None,
+) -> pd.DataFrame:
     """
     Select specific ripples from the exploded raster dataframe
     for making a simple raster plot
@@ -102,14 +107,15 @@ def select_ripples_to_plot(exp_df, ripple_index=None):
 
 
 def plot_raster(
-        exp_df,
-        height=7,
-        width=9,
-        color="black",
-        tick_width=10,
-        window=0.1,
-        ripple_index=None,
-        save_path=None):
+    exp_df: pd.DataFrame,
+    height: float = 7.0,
+    width: float = 9.0,
+    color: str = "black",
+    tick_width: float = 10.0,
+    window: float = 0.1,
+    ripple_index: int = None,
+    save_path: str = None
+):
     """
     Plot a spike raster aligned to ripple peaks, using evenly spaced rows
     for each cluster while labeling the y-axis with the actual cluster IDs.
@@ -161,11 +167,6 @@ def plot_raster(
         cluster IDs are mapped to evenly spaced row positions (0,1,2,...).
     - Y-axis tick labels show the actual cluster IDs from the recording.
     - The function does not modify exp_df.
-
-    Returns
-    -------
-    None
-        Displays a matplotlib raster plot.
     """
 
     if "t_rel" not in exp_df.columns:
