@@ -5,11 +5,11 @@ Generate ripple-aligned raster plots from spike and SWR data.
 
 Example usage: Test data
 ---------------
-python example_make_raster.py \
-    --spike_time "../data/test_data/TEST_spike_times.npy" \
-    --clusters "../data/test_data/TEST_spike_clusters.npy" \
-    --kslabels "../data/test_data/TEST_cluster_KSLabel.tsv" \
-    --swr_csv "../data/test_data/TEST_SWRs_ca2.csv" \
+python src/example_make_raster.py \
+    --spike_time "data/test_data/test_spike_times.npy" \
+    --clusters "data/test_data/test_spike_clusters.npy" \
+    --kslabels "data/test_data/test_cluster_KSLabel.tsv" \
+    --swr_csv "data/test_data/test_SWRs_ca2.csv" \
     --window 3 \
     --color black \
     --tick_width 100 \
@@ -19,33 +19,33 @@ python example_make_raster.py \
 
 Example usage: for all ripples
 ---------------
-python example_make_raster.py \
-    --spike_time "../data/full_data/7744/PartnerIntro/spike_times.npy" \
-    --clusters "../data/full_data/7744/PartnerIntro/spike_clusters.npy" \
-    --kslabels "../data/full_data/7744/PartnerIntro/cluster_KSLabel.tsv" \
+python src/example_make_raster.py \
+    --spike_time "data/full_data/7744/PartnerIntro/spike_times.npy" \
+    --clusters "data/full_data/7744/PartnerIntro/spike_clusters.npy" \
+    --kslabels "data/full_data/7744/PartnerIntro/cluster_KSLabel.tsv" \
     --swr_csv \
-        "../data/full_data/7744/PartnerIntro/7744_Partnerintro_SWRs_ca2.csv" \
+        "data/full_data/7744/PartnerIntro/7744_Partnerintro_SWRs_ca2.csv" \
     --window 0.1 \
     --color blue \
     --tick_width 20 \
     --height 7 \
     --width 9
 
-Example usage: for specific ripples
+Example usage: for specific ripple
 ---------------
-python example_make_raster.py \
-    --spike_time "../data/full_data/7744/PartnerIntro/spike_times.npy" \
-    --clusters "../data/full_data/7744/PartnerIntro/spike_clusters.npy" \
-    --kslabels "../data/full_data/7744/PartnerIntro/cluster_KSLabel.tsv" \
+python src/example_make_raster.py \
+    --spike_time "data/full_data/7744/PartnerIntro/spike_times.npy" \
+    --clusters "data/full_data/7744/PartnerIntro/spike_clusters.npy" \
+    --kslabels "data/full_data/7744/PartnerIntro/cluster_KSLabel.tsv" \
     --swr_csv \
-        "../data/full_data/7744/PartnerIntro/7744_Partnerintro_SWRs_ca2.csv" \
+        "data/full_data/7744/PartnerIntro/7744_Partnerintro_SWRs_ca2.csv" \
     --window 0.1 \
     --color blue \
     --tick_width 20 \
     --height 7 \
     --width 9 \
     --ripple_index 110 \
-    --save_path "../data/full_data/7744/PartnerIntro/raster_ripple110.png"
+    --save_path "data/full_data/7744/PartnerIntro/raster_ripple110.png"
 """
 
 import argparse
