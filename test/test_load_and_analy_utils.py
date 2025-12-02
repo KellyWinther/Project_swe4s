@@ -11,7 +11,7 @@ DATA_DIR = "data/test_data"
 PATH_SPIKE_TS = os.path.join(DATA_DIR, "test_spike_times.npy")
 PATH_SPIKE_CL = os.path.join(DATA_DIR, "test_spike_clusters.npy")
 PATH_KSLABEL = os.path.join(DATA_DIR, "test_cluster_KSLabel.tsv")
-PATH_SWR = os.path.join(DATA_DIR, "TEST_SWRs_ca2.csv")
+PATH_SWR = os.path.join(DATA_DIR, "test_SWRs_ca2.csv")
 
 BAD_PATH = os.path.join(DATA_DIR, "nonexistent_file.npy")
 
