@@ -337,7 +337,7 @@ def apply_circular_shift(
 
 
 def compute_permutation_counts(
-    shifts: list | np.ndarray, 
+    shifts: list | np.ndarray,
     swr_df: pd.DataFrame,
     spike_df: pd.DataFrame,
     total_duration: float,
