@@ -37,7 +37,7 @@ def get_swr_csv_name(dataset):
     
     # handle special case for sleepyvole
     if dataset == "7742/SSIntro":
-        return f"{animal_id}_{session}_cropped_SWRs_ca2.csv"
+        return f"{animal_id}_{session}_sleepyvole_SWRs_ca2.csv"
     
     # all other cases
     return f"{animal_id}_{session}_SWRs_ca2.csv"
