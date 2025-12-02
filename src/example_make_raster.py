@@ -15,8 +15,7 @@ python3 example_make_raster.py \
     --tick_width 100 \
     --height 5 \
     --width 7 \
-    --ripple_index 0 1 \
-    --output_csv True
+    --ripple_index 0 1
 
 Example usage: for all ripples
 ---------------
@@ -35,21 +34,22 @@ python3 example_make_raster.py \
 Example usage: for specific ripples
 ---------------
 python3 example_make_raster.py \
-    --spike_time "../data/full_data/7742/PartnerIntro/spike_times.npy" \
-    --clusters "../data/full_data/7742/PartnerIntro/spike_clusters.npy" \
-    --kslabels "../data/full_data/7742/PartnerIntro/cluster_KSLabel.tsv" \
+    --spike_time "../data/full_data/7744/PartnerIntro/spike_times.npy" \
+    --clusters "../data/full_data/7744/PartnerIntro/spike_clusters.npy" \
+    --kslabels "../data/full_data/7744/PartnerIntro/cluster_KSLabel.tsv" \
     --swr_csv \
-        "../data/full_data/7742/PartnerIntro/ \
-            7742_Partnerintro_sleepyvole_SWRs_ca2.csv" \
+        "../data/full_data/7744/PartnerIntro/7744_Partnerintro_SWRs_ca2.csv" \
     --window 0.1 \
-    --color black \
+    --color blue \
     --tick_width 20 \
     --height 7 \
     --width 9 \
-    --ripple_index 350
+    --ripple_index 110 \
+    --save_path "../data/full_data/7744/PartnerIntro/raster_ripple110.png"
 """
 
 import argparse
+import pandas as pd
 
 from loading_utils import load_spike_data, match_times
 from raster_plot_utils import (
@@ -115,6 +115,16 @@ def build_parser():
     )
 
     parser.add_argument(
+        "--save_path",
+        type=str,
+        default=None,
+        help=(
+            "Optional path to save the raster plot image. "
+            "If omitted, the plot is displayed instead."
+        ),
+    )
+
+    parser.add_argument(
         "--window",
         type=float,
         default=0.1,
@@ -152,13 +162,6 @@ def build_parser():
         help="Color for spike markers.",
     )
 
-    parser.add_argument(
-        "--output_csv",
-        type=bool,
-        default=False,
-        help="If True, saves the exploded raster DataFrame to CSV.",
-
-    )
     return parser
 
 
@@ -204,7 +207,7 @@ def main():
     )
 
     # 5. Plot raster
-    print(" 5. Plotting raster…")
+    print(" 5. Creating raster… ")
     plot_raster(
         exp_df_sel,
         height=args.height,
@@ -213,13 +216,8 @@ def main():
         tick_width=args.tick_width,
         window=args.window,
         ripple_index=args.ripple_index,
+        save_path=args.save_path,
     )
-
-    # 6. Optionally save exploded dataframe to CSV
-    if args.output_csv:
-        output_path = "test/exploded_raster_data.csv"
-        exp_df_sel.to_csv(output_path, index=False)
-        print(f"\nExploded raster DataFrame saved to {output_path}")
 
 
 if __name__ == "__main__":

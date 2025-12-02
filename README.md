@@ -52,7 +52,7 @@ The core functionality of our workflow is separated into three files...
 
 3) ```raster_plot.py``` ~ Uses the data produced by 'loading_utils.py' to generate "Raster plots." Raster plots are useful for visualizing discrete spiking data. These are scatter plots used in neuroscience to visualize the timing of action potentials (spikes) from one or more neurons over time. Each row in the plot represents a single neuron, and each vertical line represents a spike at a specific time point. This visualization allows researchers to see patterns in neural activity and how it relates to specific stimuli or task. Our plots are spiking activity, where time on the x-axis is relative to the peak frequency of the sharp wave ripple. Around it's peak, the SWR often has the greatest number of co-active neurons. 
 
-There are also two example scripts that demonstrate example usage of these functions. These example scripts are also used for functional testing of the project piepline functionality. For the example script, run the following command from the root directory...
+There are also two example scripts that demonstrate example usage of these functions. To the example script, run the following command from the root directory...
 ```
 python src/example_call.py
 ```
@@ -97,63 +97,3 @@ If you look in the '\data' folder, you will see two sub-folders labelled '\test_
 
 ### What's in the __'\test' Folder__?
 Here you can find the scripts we use for automated testing. These are broken up into "functional tests" and "unit tests." We intend to increase the scope of these tests in the near future.
-
-1) ```test_load_and_analy_utils.py``` ~ Has unit tests for functions in ```analysis_utils.py``` and ```loading_utils.py```. 
-    - Responsible for testing:
-        - Correct datatype and output structures
-        - Missing data errors
-        - Bad file path errors
-        - Edge cases such as empty lists, missing columns and invalid modes
-        - Circular permutation functional flow tests
-    To manually run tests, execute the following line from the root directory ...
-    ```
-    python -m unittest test/test_load_and_analy_utils.py
-    ```
-
-2) ```test_raster_utils.py``` ~ Has unit tests for functions in the ```raster_plot_utils.py```.
-    - Responsible for testing:
-        - Correct long-form exploding
-        - Correct ```t_rel``` calculation
-        - Handling of string list inputs
-        - Ripple filtering
-        - Incorrect datatype handling
-        - Invalid ripple index handling
-    - DOES NOT test visual output
-    To manually run tests, execute the following line from the root directory...
-    ```
-    python -m unittest test/test_raster_utils.py
-    ```
-
-3) ```run_analysis.sh``` ~ Has functional testing for the loading and analysis pipleine. It uses the ```example_call.py``` file to run through analysis pipeline and outputs a file ```correlation_matrix.csv``` which is compared to ```expected_correlation_matrix.csv``` found in /data/testdata. This expected correlation matrix fits the output from the following command...
-```
-python src/example_call.py \
-    --spike_time_filename "data/full_data/7742/PartnerIntro/spike_times.npy" \
-    --cluster_filename "data/full_data/7742/PartnerIntro/spike_clusters.npy" \
-    --KSlabel_filename "data/full_data/7742/PartnerIntro/cluster_KSLabel.tsv" \
-    --swr_filename "data/full_data/7742/PartnerIntro/7742_Partnerintro_sleepyvole_SWRs_ca2.csv" \
-    --output_csv True
-```
-The test passes if the output from running the example call pipeline matches the ```expected_correlation_matrix.csv```. To run the analysis functional test execute the following line from the root directory...
-```
-bash test/run_analysis.sh
-```
-
-4) ```run_analysis.py``` ~ Has functional testing for the raster plotting pipleine. It uses the ```example_make_raster.py``` file to run through raster plotting pipeline and outputs a file ```exploded_raster_data.csv``` which is compared to ```expected_raster_data.csv``` found in /data/testdata. The expected raster data fits the output from the following command...
-```
-python src/example_make_raster.py \
-    --spike_time data/test_data/TEST_spike_times.npy \
-    --clusters data/test_data/TEST_spike_clusters.npy \
-    --kslabels data/test_data/TEST_cluster_KSLabel.tsv \
-    --swr_csv data/test_data/TEST_SWRs_ca2.csv \
-    --window 3 \
-    --color black \
-    --tick_width 100 \
-    --height 5 \
-    --width 7 \
-    --ripple_index 0 1 \
-    --output_csv True
-```
-The test passes if the output from running the example raster plot pipeline matches the ```expected_raster_data.csv```. To run the raster plot functional test execute the following line from the root directory...
-```
-bash test/run_raster.sh
-```
