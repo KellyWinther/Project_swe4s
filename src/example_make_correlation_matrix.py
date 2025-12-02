@@ -6,16 +6,22 @@ from loading_utils import load_spike_data, match_times
 from analysis_utils import make_correlation_dictionary
 from analysis_utils import visualize_correlation_dictionary
 
-'''
+"""
 Example call (not default file):
 
-python src/example_make_correlation_matrix.py \
-    --spike_time_filename "data/full_data/7742/PartnerIntro/spike_times.npy" \
-    --cluster_filename "data/full_data/7742/PartnerIntro/spike_clusters.npy" \
-    --KSlabel_filename "data/full_data/7742/PartnerIntro/cluster_KSLabel.tsv" \
-    --swr_filename "data/full_data/7742/PartnerIntro/7742_Partnerintro_sleepyvole_SWRs_ca2.csv" \
+python src/example_make_correlation_matrix.py (
+    --spike_time_filename
+        "data/full_data/7742/PartnerIntro/spike_times.npy"
+    --cluster_filename
+        "data/full_data/7742/PartnerIntro/spike_clusters.npy"
+    --KSlabel_filename
+        "data/full_data/7742/PartnerIntro/cluster_KSLabel.tsv"
+    --swr_filename
+        "data/full_data/7742/PartnerIntro/"
+        "7742_Partnerintro_sleepyvole_SWRs_ca2.csv"
     --output_csv True
-'''
+)
+"""
 
 
 def main():
