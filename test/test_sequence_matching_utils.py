@@ -76,15 +76,6 @@ class TestHashUtils(unittest.TestCase):
         # Ensures that an empty list does return a hash (0)
         self.assertEqual(utils._prefix_hash([], BASE, MOD), [0])
 
-    def test_get_hash(self):
-        pass
-
-    def test_has_match(self):
-        pass
-
-    def test_recover_sequence(self):
-        pass
-
     def test_lccs_rabin_karp(self):
 
         # Overlap of 4 entries [1, 2, 3, 4]
