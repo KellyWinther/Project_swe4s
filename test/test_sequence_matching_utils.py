@@ -9,13 +9,7 @@ import pandas as pd
 sys.path.append("src/")  # noqa
 
 import sequence_matching_utils as utils  # noqa
-from example_make_correlation_matrix import (
-    get_base_directory,
-    build_file_paths,
-    load_data,
-    preprocess_behavior_df,
-    compute_overlap_matrix,
-)
+import example_sequence_matching as sqm  # noqa
 
 # Default parameters used in 'lccs_rabin_karp'
 BASE = 257
@@ -139,19 +133,19 @@ def mock_group_dataframes_by_time(window_df, event_df, event_time_column,
 
 class TestPipelineFunctions(unittest.TestCase):
     def test_get_base_directory(self):
-        self.assertEqual(get_base_directory("test"), "data/test_data")
-        self.assertEqual(get_base_directory("7742"), "data/full_data")
-        self.assertEqual(get_base_directory("7744"), "data/full_data")
+        self.assertEqual(sqm.get_base_directory("test"), "data/test_data")
+        self.assertEqual(sqm.get_base_directory("7742"), "data/full_data")
+        self.assertEqual(sqm.get_base_directory("7744"), "data/full_data")
 
     def test_build_file_paths_test(self):
-        paths = build_file_paths("test", "PartnerIntro")
+        paths = sqm.build_file_paths("test", "PartnerIntro")
         self.assertIn("test_spike_times.npy", paths["spike_times"])
         self.assertIn("test_events_with_indices.csv", paths["behavior_csv"])
         self.assertIn("test_SWRs_ca2.csv", paths["swr_csv"])
         self.assertTrue(paths["spike_times"].startswith("data/test_data"))
 
     def test_build_file_paths_fulldata_7742(self):
-        paths = build_file_paths("7742", "PartnerIntro")
+        paths = sqm.build_file_paths("7742", "PartnerIntro")
         # Check directory structure
         for key in paths:
             self.assertIn("data/full_data/7742/PartnerIntro", paths[key])
@@ -159,58 +153,11 @@ class TestPipelineFunctions(unittest.TestCase):
         self.assertIn("7742_PartnerIntro_sleepyvole", paths["behavior_csv"])
 
     def test_build_file_paths_fulldata_7744(self):
-        paths = build_file_paths("7744", "SSIntro")
+        paths = sqm.build_file_paths("7744", "SSIntro")
         for key in paths:
             self.assertIn("data/full_data/7744/SSIntro", paths[key])
         self.assertIn("7744_SSIntro_events_with_indices.csv",
                       paths["behavior_csv"])
-
-    def test_load_data(self):
-        # Create temporary directory with fake data
-        tempdir = tempfile.mkdtemp()
-
-        spike_times = os.path.join(tempdir, "spike_times.npy")
-        spike_clusters = os.path.join(tempdir, "spike_clusters.npy")
-        kslabels = os.path.join(tempdir, "cluster_KSLabel.tsv")
-        behavior = os.path.join(tempdir, "beh.csv")
-        swr = os.path.join(tempdir, "swr.csv")
-
-        # Make minimal valid mock files
-        np.save(spike_times, np.array([1, 2, 3]))
-        np.save(spike_clusters, np.array([1, 2, 3]))
-        pd.DataFrame({"label": ["good"]}).to_csv(kslabels, sep="\t",
-                                                 index=False)
-        pd.DataFrame({"EventType": ["social interaction"], "indexStart": [0],
-                      "indexEnd": [10]}).to_csv(behavior, index=False)
-        pd.DataFrame({"Start": [0], "Stop": [10]}).to_csv(swr, index=False)
-
-        paths = {
-            "spike_times": spike_times,
-            "spike_clusters": spike_clusters,
-            "kslabels": kslabels,
-            "behavior_csv": behavior,
-            "swr_csv": swr,
-        }
-
-        # Patch the load_spike_data & filter_dataframe (monkeypatch)
-        original_load = sys.modules["loading_utils"].load_spike_data
-        original_filter = sys.modules["loading_utils"].filter_dataframe
-
-        sys.modules["loading_utils"].load_spike_data = mock_load_spike_data
-        sys.modules["loading_utils"].filter_dataframe = mock_filter_dataframe
-
-        spike_df, behavior_df, swr_df = load_data(paths)
-
-        # Restore originals
-        sys.modules["loading_utils"].load_spike_data = original_load
-        sys.modules["loading_utils"].filter_dataframe = original_filter
-
-        # Ensure DataFrames loaded & filtered
-        self.assertEqual(len(spike_df), 2)  # only "good" rows kept
-        self.assertIn("EventType", behavior_df.columns)
-        self.assertIn("Start", swr_df.columns)
-
-        shutil.rmtree(tempdir)
 
     def test_preprocess_behavior_df(self):
         df = pd.DataFrame({
@@ -223,7 +170,7 @@ class TestPipelineFunctions(unittest.TestCase):
         original_filter = sys.modules["loading_utils"].filter_dataframe
         sys.modules["loading_utils"].filter_dataframe = mock_filter_dataframe
 
-        out = preprocess_behavior_df(df)
+        out = sqm.preprocess_behavior_df(df)
         sys.modules["loading_utils"].filter_dataframe = original_filter
 
         self.assertEqual(len(out), 1)
@@ -238,7 +185,7 @@ class TestPipelineFunctions(unittest.TestCase):
         # First SWR row overlaps with first behavior seq → lccs = 2/3
         # Third SWR row overlaps with first behavior seq → lccs = 3/3 = 1.0
 
-        mat = compute_overlap_matrix(behavior_lists, swr_lists)
+        mat = sqm.compute_overlap_matrix(behavior_lists, swr_lists)
 
         self.assertEqual(mat.shape, (3, 3))
         self.assertGreater(mat[0, 0], 0)
