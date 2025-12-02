@@ -26,7 +26,7 @@ Then, to download the data run ...
 scripts/download_data.sh
 ```
 
-Note: google has a download limit per IP address so you will only be able to do this once. It you run into errors, just visit the google website and download directly to your device: https://drive.google.com/drive/folders/1MCQce7FXHNKEQg97zs5YrXFSZbxB_iDU?usp=drive_link
+Note: google has a download limit per IP address so you will only be able to do this once. It you run into errors, just visit the google website and download directly to your device: https://drive.google.com/drive/folders/1RcxsdghOMMvaF-mQlVCOtkmXXj2TR7fg?usp=drive_link
 
 
 Once the datasets are downloaded to run our snakemake workflow, simply run...
