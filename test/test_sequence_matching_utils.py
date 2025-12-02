@@ -12,7 +12,7 @@ BASE = 257
 MOD = (1 << 61) - 1
 
 
-class TestHashUtils(unittest.TestCase):
+class TestSequence(unittest.TestCase):
     def test_preprocess_lists(self):
 
         for _ in range(20):
