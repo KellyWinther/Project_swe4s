@@ -1,7 +1,7 @@
 # Can Prarie Voles Help Us Study Memory Formation?
 
 __Collaborators:__ Kelly, Autumn, Audrey<br>
-__Last Updated:__ 11/3/2025
+__Last Updated:__ 12/1/2025
 
 <img src="https://static.scientificamerican.com/sciam/cache/file/F026E019-CE84-4481-AAB758B7ECA7A10F_source.jpg?crop=16%3A9%2Csmart&w=1920" width="700em">
 
@@ -20,12 +20,21 @@ If you would like to re-create our analysis, you can clone our respository by ru
 ```
 git clone https://github.com/KellyWinther/Project_swe4s.git
 ```
-Then, to run our snakemake workflow, simply run...
+
+Then, to download the data run ...
+```
+scripts/download_data.sh
+```
+
+Note: google has a download limit per IP address so you will only be able to do this once. It you run into errors, just visit the google website and download directly to your device: https://drive.google.com/drive/folders/1MCQce7FXHNKEQg97zs5YrXFSZbxB_iDU?usp=drive_link
+
+
+Once the datasets are downloaded to run our snakemake workflow, simply run...
 ```
 cd Project_swe4s
 snakemake --cores 1
 ```
-This will create an 'outputs/' folder in the root directory with some intermediate data products. As of now, the primary result is the ```correlation_matrix.png``` that shows how correlated neuron clusters are when they fire. If you are having trouble getting the workflow to run, try using the ```environment.yml``` file we provided!
+This will create an 'outputs/' folder in the root directory with some intermediate data products. This snakemake will producecorr correlation matrix and raster plots of neuron spikig activity for each full_data set provided in the download. If you are having trouble getting the workflow to run, try using the ```environment.yml``` file we provided!
 
 ## Repository Structure
 There are three important folders in our repository...
@@ -50,16 +59,16 @@ The core functionality of our workflow is separated into three files...
 
 2) ```loading_utils.py``` ~ Contains three functions that are necessary for processing our data. Specifically, these functions are responsible for loading spike cluster data into a Pandas DataFrame and joining two DataFrames based on whether an 'event time' falls within a 'time window.'
 
-3) ```raster_plot.py``` ~ Uses the data produced by 'loading_utils.py' to generate "Raster plots." Raster plots are useful for visualizing discrete spiking data. These are scatter plots used in neuroscience to visualize the timing of action potentials (spikes) from one or more neurons over time. Each row in the plot represents a single neuron, and each vertical line represents a spike at a specific time point. This visualization allows researchers to see patterns in neural activity and how it relates to specific stimuli or task. Our plots are spiking activity, where time on the x-axis is relative to the peak frequency of the sharp wave ripple. Around it's peak, the SWR often has the greatest number of co-active neurons. 
+3) ```raster_plot_utils.py``` ~ Uses the data produced by 'loading_utils.py' to generate "Raster plots." Raster plots are useful for visualizing discrete spiking data. These are scatter plots used in neuroscience to visualize the timing of action potentials (spikes) from one or more neurons over time. Each row in the plot represents a single neuron, and each vertical line represents a spike at a specific time point. This visualization allows researchers to see patterns in neural activity and how it relates to specific stimuli or task. Our plots are spiking activity, where time on the x-axis is relative to the peak frequency of the sharp wave ripple. Around it's peak, the SWR often has the greatest number of co-active neurons. The arguments in the functions allow you to decide if you would like to plot all data for all sharp wave ripples or if you want to plot a single or subset (provide a list of SWR index) of spiking data in the raster plot. You can choose colors, time windows relative to the peak of the SWRs, and more. See the example_make_raster arguments for more details. 
 
-There are also two example scripts that demonstrate example usage of these functions. To the example script, run the following command from the root directory...
-```
-python src/example_call.py
-```
-NOTE: As of now, the correlation matrix will not display when you run these commands. This is a consequence of a choice we made to create our snakemake workflow, and will be adjusted in future updates.
+4) ```sequence_matching_utils.py``` ~ These functions combine to provide the investigation of sequenctial cluster spikes. Using hash tables, they search for the longest match between spikes in SWRs and spikes during awake social behaviors. Plots of normalized overlap help visualize the replay between awake and asleep spiking activity. 
+
+There are also example scripts that use the main function and demonstrate example usage of the utils scripts. Example calls are provided at the top of each docstring for the example files. 
 
 ### What's in the __'\data' Folder__?
-There are four primary types of data contained here...
+If you look in the '\data' folder, you will see two sub-folders labelled 'test_data' and 'full_data'. The first of these sub-folders holds short, sample versions of our data that we can use for quick testing. 
+
+There are five primary types of data contained here...
 
 1. ```spike_times.npy```
     - a 1D numpy array
@@ -92,8 +101,6 @@ There are four primary types of data contained here...
             - max envelope amplitude of the signal (using the hilbert transformation)
     - brain region label "ca2" is hippocampal subregion CA2
 
-
-If you look in the '\data' folder, you will see two sub-folders labelled '\test_data' and 'full_data'. The first of these sub-folders holds short, sample versions of our data that we can use for quick testing. 
 
 ### What's in the __'\test' Folder__?
 Here you can find the scripts we use for automated testing. These are broken up into "functional tests" and "unit tests." We intend to increase the scope of these tests in the near future.
