@@ -3,6 +3,7 @@ import pandas as pd
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import os
+import sys
 
 from loading_utils import load_spike_data, filter_dataframe
 
