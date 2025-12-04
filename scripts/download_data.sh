@@ -6,7 +6,7 @@ set -euo pipefail
 OUT_DIR="data"
 
 # Google Drive folder URL (replace or add more as needed)
-FOLDER_URL="https://drive.google.com/drive/folders/1RcxsdghOMMvaF-mQlVCOtkmXXj2TR7fg?usp=drive_link"
+FOLDER_URL="https://drive.google.com/drive/folders/1MCQce7FXHNKEQg97zs5YrXFSZbxB_iDU?usp=drive_link"
 
 # Create output directory if needed
 if [ -d "${OUT_DIR}" ]; then
