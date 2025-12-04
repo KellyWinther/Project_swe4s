@@ -9,7 +9,6 @@ import pandas as pd
 sys.path.append("src/")  # noqa
 
 import sequence_matching_utils as utils  # noqa
-import example_sequence_matching as matrix  # noqa
 
 # Default parameters used in 'lccs_rabin_karp'
 BASE = 257
@@ -133,19 +132,19 @@ def mock_group_dataframes_by_time(window_df, event_df, event_time_column,
 
 class TestPipelineFunctions(unittest.TestCase):
     def test_get_base_directory(self):
-        self.assertEqual(matrix.get_base_directory("test"), "data/test_data")
-        self.assertEqual(matrix.get_base_directory("7742"), "data/full_data")
-        self.assertEqual(matrix.get_base_directory("7744"), "data/full_data")
+        self.assertEqual(utils.get_base_directory("test"), "data/test_data")
+        self.assertEqual(utils.get_base_directory("7742"), "data/full_data")
+        self.assertEqual(utils.get_base_directory("7744"), "data/full_data")
 
     def test_build_file_paths_test(self):
-        paths = matrix.build_file_paths("test", "PartnerIntro")
+        paths = utils.build_file_paths("test", "PartnerIntro")
         self.assertIn("test_spike_times.npy", paths["spike_times"])
         self.assertIn("test_events_with_indices.csv", paths["behavior_csv"])
         self.assertIn("test_SWRs_ca2.csv", paths["swr_csv"])
         self.assertTrue(paths["spike_times"].startswith("data/test_data"))
 
     def test_build_file_paths_fulldata_7742(self):
-        paths = matrix.build_file_paths("7742", "PartnerIntro")
+        paths = utils.build_file_paths("7742", "PartnerIntro")
         # Check directory structure
         for key in paths:
             self.assertIn("data/full_data/7742/PartnerIntro", paths[key])
@@ -153,7 +152,7 @@ class TestPipelineFunctions(unittest.TestCase):
         self.assertIn("7742_PartnerIntro_sleepyvole", paths["behavior_csv"])
 
     def test_build_file_paths_fulldata_7744(self):
-        paths = matrix.build_file_paths("7744", "SSIntro")
+        paths = utils.build_file_paths("7744", "SSIntro")
         for key in paths:
             self.assertIn("data/full_data/7744/SSIntro", paths[key])
         self.assertIn("7744_SSIntro_events_with_indices.csv",
@@ -170,7 +169,7 @@ class TestPipelineFunctions(unittest.TestCase):
         original_filter = sys.modules["loading_utils"].filter_dataframe
         sys.modules["loading_utils"].filter_dataframe = mock_filter_dataframe
 
-        out = matrix.preprocess_behavior_df(df)
+        out = utils.preprocess_behavior_df(df)
         sys.modules["loading_utils"].filter_dataframe = original_filter
 
         self.assertEqual(len(out), 1)
@@ -185,7 +184,7 @@ class TestPipelineFunctions(unittest.TestCase):
         # First SWR row overlaps with first behavior seq → lccs = 2/3
         # Third SWR row overlaps with first behavior seq → lccs = 3/3 = 1.0
 
-        mat = matrix.compute_overlap_matrix(behavior_lists, swr_lists)
+        mat = utils.compute_overlap_matrix(behavior_lists, swr_lists)
 
         self.assertEqual(mat.shape, (3, 3))
         self.assertGreater(mat[0, 0], 0)
