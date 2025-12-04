@@ -16,12 +16,12 @@ THIS WILL TAKE SOME TIME:
 Example usage
 -------------
 python src/example_run_permutation.py \
-    --data_dir "/Users/kellyschulte/Desktop/full_data/7742/SSIntro" \
-     --swr_csv "/Users/kellyschulte/Desktop/full_data/7742/SSIntro/\
-7742_SSIntro_cropped_SWRs_ca2.csv" \
-    --save_path "/Users/kellyschulte/Desktop/full_data/7742/SSIntro/\
+    --data_dir "/Users/kellyschulte/Desktop/full_data/7744/PartnerIntro" \
+     --swr_csv "/Users/kellyschulte/Desktop/full_data/7744/PartnerIntro/\
+7744_PartnerIntro_SWRs_ca2.csv" \
+    --save_path "/Users/kellyschulte/Desktop/full_data/7744/PartnerIntro/\
 first_spike_permutation.csv" \
-    --plot_cluster 154
+    --plot_cluster 16
 """
 
 import argparse
