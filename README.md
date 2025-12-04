@@ -26,7 +26,7 @@ Then, to download the data run ...
 scripts/download_data.sh
 ```
 
-Note: google has a download limit per IP address so you will only be able to do this once. It you run into errors, just visit the google website and download directly to your device: https://drive.google.com/drive/folders/1RcxsdghOMMvaF-mQlVCOtkmXXj2TR7fg?usp=drive_link
+Note: google has a download limit per IP address so you will only be able to do this once. It you run into errors, just visit the google website and download directly to your device: https://drive.google.com/drive/folders/1MCQce7FXHNKEQg97zs5YrXFSZbxB_iDU?usp=drive_link
 
 
 Once the datasets are downloaded to run our snakemake workflow, simply run...
@@ -65,8 +65,13 @@ The core functionality of our workflow is separated into three files...
 
 There are also example scripts that use the main function and demonstrate example usage of the utils scripts. Example calls are provided at the top of each docstring for the example files. 
 
+1) example_make_correlation_matrix.py
+2) example_make_raster.py
+3) example_run_permutation.py
+4) example_sequence_matching.py
+
 ### What's in the __'\data' Folder__?
-If you look in the '\data' folder, you will see two sub-folders labelled 'test_data' and 'full_data'. The first of these sub-folders holds short, sample versions of our data that we can use for quick testing. 
+After running the download_data.sh script in "scripts/", you will have two sub-folders labelled 'test_data' and 'full_data'. test_data holds short, sample versions of our data that we can use for quick testing, but make no biological sense. full_data includes subfolders for two prairie voles, each with two types of social interaction recordings. One Partner introduction with a novel opposite-sex vole and one Same-sex (SS) introduction. The snakemake will use all these files to make basic raster plots and correlation plots of co-activity. They are also randomly selected in the different "example usage" portion of each example_..._.py file. Below are more details on each of the types of files in the folders.
 
 There are five primary types of data contained here...
 
